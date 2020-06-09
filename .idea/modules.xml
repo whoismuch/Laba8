@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Laba8.iml" filepath="$PROJECT_DIR$/Laba8.iml" />
+      <module fileurl="file://$PROJECT_DIR$/clientMod/clientMod.iml" filepath="$PROJECT_DIR$/clientMod/clientMod.iml" />
+      <module fileurl="file://$PROJECT_DIR$/commonMod/commonMod.iml" filepath="$PROJECT_DIR$/commonMod/commonMod.iml" />
+      <module fileurl="file://$PROJECT_DIR$/serverMod/serverMod.iml" filepath="$PROJECT_DIR$/serverMod/serverMod.iml" />
+    </modules>
+  </component>
+</project>
