@@ -170,10 +170,11 @@ public class ClientProviding {
         System.exit(0);
     }
 
+
     public void sendCommand (String commandname) throws IOException {
         CommandDescription command;
         if (userManager.checkElement(commandname)) {
-            Route route = userManager.readRoute( );
+            Route route = userManager.getRoute( );
             route.setUsername(username);
             command = new CommandDescription(commandname, arg, route, username, password, choice);
         } else {
@@ -190,8 +191,10 @@ public class ClientProviding {
     public String getResult ( ) throws IOException {
         selector.select();
         routes = (LinkedHashSet<Route>) dataExchangeWithServer.getFromServer();
+        System.out.println(routes.toString());
         selector.select( );
         String s = dataExchangeWithServer.getFromServer( ).toString( );
+        System.out.println(s);
         return s;
 
 //            if (s.contains("\nИзвините, ваш запрос не может быть выполнен. Попробуйте еще раз")) {
@@ -315,6 +318,10 @@ public class ClientProviding {
             }
         }
         return true;
+    }
+
+    public UserManager getUserManager ( ) {
+        return userManager;
     }
 }
 

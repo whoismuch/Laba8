@@ -15,8 +15,42 @@ public class MainWindowCollectionModel {
     }
 
     public LinkedHashSet<Route> giveMeMyCollection () throws IOException {
-        clientProviding.clientWork( );
-        clientProviding.getMap( );
         return clientProviding.getRoutes( );
     }
+
+    public String infoCommand() throws IOException {
+        clientProviding.clientWork();
+        clientProviding.getMap();
+        clientProviding.sendCommand("info");
+        return clientProviding.getResult();
+    }
+
+    public String sumOfDistanceCommand () throws IOException {
+        clientProviding.clientWork();
+        clientProviding.getMap();
+        clientProviding.sendCommand("sum_of_distance");
+        return clientProviding.getResult();
+    }
+
+    public String historyCommand ( ) throws IOException {
+        clientProviding.clientWork();
+        clientProviding.getMap();
+        clientProviding.sendCommand("history");
+        return clientProviding.getResult();
+    }
+
+    public String clearCommand ( ) throws IOException {
+        clientProviding.clientWork();
+        clientProviding.getMap();
+        clientProviding.sendCommand("clear");
+        return clientProviding.getResult();
+    }
+
+    public void addCommand (Route route) throws IOException {
+        clientProviding.clientWork();
+        clientProviding.getMap();
+        clientProviding.sendCommand("add");
+        clientProviding.getResult();
+    }
+
 }

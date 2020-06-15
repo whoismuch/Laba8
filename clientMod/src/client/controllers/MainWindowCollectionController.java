@@ -4,19 +4,22 @@ import client.ClientApp;
 import client.FullRoute;
 import client.models.ClientProviding;
 import client.models.MainWindowCollectionModel;
-import com.sun.tools.corba.se.idl.toJavaPortable.Helper;
-import common.generatedClasses.Coordinates;
-import common.generatedClasses.Location;
 import common.generatedClasses.Route;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import javafx.event.ActionEvent;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
@@ -26,6 +29,8 @@ public class MainWindowCollectionController {
     private ClientProviding clientProviding;
     private ClientApp clientApp;
     private MainWindowCollectionModel mainWindowCollectionModel;
+    private CommandResultController commandResultController;
+    private EnterRouteController enterRouteController;
 
     @FXML
     private TableView table;
@@ -73,9 +78,6 @@ public class MainWindowCollectionController {
     private Button info;
 
     @FXML
-    private Button help;
-
-    @FXML
     private Button sum_of_distance;
 
     @FXML
@@ -105,6 +107,7 @@ public class MainWindowCollectionController {
     @FXML
     private Button blup;
 
+    private boolean alreadyOpened;
 
     @FXML
     private void initialize ( ) {
@@ -115,7 +118,6 @@ public class MainWindowCollectionController {
         remove_lower.setWrapText(true);
         blup.setWrapText(true);
 
-        // устанавливаем тип и значение которое должно хранится в колонке
         id.setCellValueFactory(new PropertyValueFactory<FullRoute, Long>("id"));
         owner.setCellValueFactory(new PropertyValueFactory<FullRoute, String>("username"));
         name.setCellValueFactory(new PropertyValueFactory<FullRoute, String>("name"));
@@ -132,14 +134,153 @@ public class MainWindowCollectionController {
     }
 
     @FXML
-    public void onActionInfo (ActionEvent actionEvent) {
+    public void onActionInfo (ActionEvent actionEvent) throws IOException {
+        info.cancelButtonProperty( );
+        String result = mainWindowCollectionModel.infoCommand( );
+
+        if (!alreadyOpened) nextStep(result);
+        else commandResultController.setResult(result);
+    }
+
+
+    @FXML
+    public void onActionSumOfDistance (ActionEvent actionEvent) throws IOException {
+        String result = mainWindowCollectionModel.sumOfDistanceCommand( );
+
+        if (!alreadyOpened) nextStep(result);
+        else commandResultController.setResult(result);
+    }
+
+    @FXML
+    public void onActionHistory (ActionEvent actionEvent) throws IOException {
+        String result = mainWindowCollectionModel.historyCommand( );
+
+        if (!alreadyOpened) nextStep(result);
+        else commandResultController.setResult(result);
+    }
+
+    @FXML
+    public void onActionClear (ActionEvent actionEvent) throws IOException {
+        String result = mainWindowCollectionModel.clearCommand( );
+
+        if (!alreadyOpened) nextStep(result);
+        else commandResultController.setResult(result);
+    }
+
+    @FXML
+    public void onActionPrintAscending (ActionEvent actionEvent) throws IOException {
+        setColumns( );
+    }
+
+    @FXML
+    public void onActionAdd (ActionEvent actionEvent) throws IOException, InterruptedException {
+        if (commandResultController != null) {
+            Stage stage = (Stage) commandResultController.getText( ).getScene( ).getWindow( );
+            stage.close( );
+        }
+
+        openEnterRoute();
+
+//        if (!alreadyOpened) openEnterRoute( );
+//        else {
+//            Stage stage1 = (Stage) enterRouteController.getNameField( ).getScene( ).getWindow( );
+//            stage1.close( );
+//
+//            openEnterRoute( );
+//        }
+    }
+
+    public void doAdd () throws IOException {
+        System.out.println(1);
+        mainWindowCollectionModel.addCommand(clientProviding.getUserManager().getRoute());
+        setColumns();
+    }
+
+    public void openEnterRoute ( ) {
+        Thread thread = new Thread(new Runnable( ) {
+            @Override
+            public void run ( ) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace( );
+                }
+
+                Platform.runLater(( ) -> {
+                    FXMLLoader loader = null;
+                    try {
+                        loader = clientApp.showEnterRoute( );
+                    } catch (IOException e) {
+                        e.printStackTrace( );
+                    }
+                    enterRouteController = loader.getController( );
+                    alreadyOpened = true;
+                    enterRouteController.getNameField( ).getScene( ).getWindow( ).setOnCloseRequest(new EventHandler<WindowEvent>( ) {
+                        public void handle (WindowEvent we) {
+                            alreadyOpened = false;
+                        }
+                    });
+
+//                    try {
+//                        while (!isRouteReady && stage.isShowing( )) ;
+//                        mainWindowCollectionModel.addCommand(clientProviding.getUserManager( ).getRoute( ));
+//                        setColumns( );
+//                        isRouteReady = false;
+//                    } catch (IOException e) {
+//                        e.printStackTrace( );
+//                    }
+                });
+            }
+        });
+
+        thread.start( );
+    }
+
+    @FXML
+    public void onActionRemoveLower (ActionEvent actionEvent) {
 
     }
+
+    @FXML
+    public void onActionRemoveGreater (ActionEvent actionEvent) {
+
+    }
+
+
+    public void nextStep (String result) {
+        new Thread(( ) -> {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace( );
+            }
+            Platform.runLater(( ) -> {
+                FXMLLoader loader = null;
+                try {
+                    loader = clientApp.showCommandResult( );
+                } catch (IOException e) {
+                    e.printStackTrace( );
+                }
+                commandResultController = loader.getController( );
+                alreadyOpened = true;
+                commandResultController.setResult(result);
+                commandResultController.getText( ).getScene( ).getWindow( ).setOnCloseRequest(new EventHandler<WindowEvent>( ) {
+                    public void handle (WindowEvent we) {
+                        alreadyOpened = false;
+                    }
+                });
+            });
+        }).start( );
+
+    }
+
 
     public void setEverything (ClientProviding clientProviding, ClientApp clientApp) throws IOException {
         this.clientProviding = clientProviding;
         this.clientApp = clientApp;
         mainWindowCollectionModel = new MainWindowCollectionModel(clientProviding);
+
+        alreadyOpened = false;
 
         setColumns( );
     }
@@ -148,9 +289,11 @@ public class MainWindowCollectionController {
         LinkedHashSet<Route> routes = mainWindowCollectionModel.giveMeMyCollection( );
         ObservableList<FullRoute> list = FXCollections.observableArrayList( );
         for (Route route : routes) {
+            System.out.println(route + "\n" );
             list.add(new FullRoute(route));
         }
         table.setItems(list);
     }
+
 
 }
