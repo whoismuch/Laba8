@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 
 public class ServerApp {
 
-    private List<Socket> clients;
+    private volatile List<Socket> clients;
 
 
     public void beginTheParty (String port, String portBD, String login, String password) throws UnknownHostException, NumberFormatException, InputMismatchException {
@@ -48,8 +48,9 @@ public class ServerApp {
 
                 Socket incoming = ss.accept( ).socket( );
                 Socket listener = ss.accept( ).socket( );
+
                 clients.add(listener);
-//                notifyClients(routeBook.getRoutes());
+                notifyClients(routeBook.getRoutes( ));
 
                 System.out.println(incoming + " подключился к серверу.");
 
@@ -59,7 +60,7 @@ public class ServerApp {
                 sendToClient.run( );
 
 
-                GetFromClient getFromClient = new GetFromClient(incoming, clients, db, navigator, routeBook, driver, executorService, sendToClient);
+                GetFromClient getFromClient = new GetFromClient(incoming, listener, clients, db, navigator, routeBook, driver, executorService, sendToClient);
                 executor.submit(getFromClient);
 
 
@@ -75,8 +76,10 @@ public class ServerApp {
     }
 
     public void notifyClients (LinkedHashSet<Route> routes) {
-        try {
-            for (Socket socket : clients) {
+        Iterator<Socket> it = clients.iterator( );
+        while (it.hasNext( )) {
+            try {
+                Socket socket = it.next( );
                 ByteArrayOutputStream baos = new ByteArrayOutputStream( );
                 ObjectOutputStream send = new ObjectOutputStream(baos);
                 send.writeObject(routes);
@@ -84,9 +87,11 @@ public class ServerApp {
                 socket.getOutputStream( ).write(outcoming);
                 send.flush( );
                 baos.flush( );
-                send.close();
+                send.close( );
+            } catch (IOException ex) {
+//                it.remove( );
             }
-        } catch (IOException ex) {
         }
     }
+
 }

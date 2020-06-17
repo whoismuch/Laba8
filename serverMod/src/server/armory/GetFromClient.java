@@ -22,9 +22,10 @@ public class GetFromClient implements Runnable {
     private SendToClient sendToClient;
     private Driver driver;
     private List<Socket> clients;
+    private Socket listener;
 
 
-    public GetFromClient (Socket incoming, List<Socket> clients, DataBase db, Navigator navigator, RouteBook routeBook, Driver driver, ExecutorService executorService, SendToClient sendToClient) {
+    public GetFromClient (Socket incoming, Socket listener, List<Socket> clients, DataBase db, Navigator navigator, RouteBook routeBook, Driver driver, ExecutorService executorService, SendToClient sendToClient) {
         this.incoming = incoming;
         this.db = db;
         this.navigator = navigator;
@@ -33,6 +34,8 @@ public class GetFromClient implements Runnable {
         this.sendToClient = sendToClient;
         this.driver = driver;
         this.clients = clients;
+        this.listener = listener;
+
     }
 
     public void run ( ) {
@@ -40,7 +43,7 @@ public class GetFromClient implements Runnable {
             ObjectInputStream get = new ObjectInputStream(incoming.getInputStream( ));
             obj = get.readObject( );
 
-            Thread childTread = new Thread(new ServerConnection(obj, incoming, clients, db, routeBook, navigator, driver, executorService, sendToClient));
+            Thread childTread = new Thread(new ServerConnection(obj, incoming, listener, clients, db, routeBook, navigator, driver, executorService, sendToClient));
             childTread.start( );
         } catch (EOFException e) {
             System.out.println("Клиент решил внезапно покинуть нас");

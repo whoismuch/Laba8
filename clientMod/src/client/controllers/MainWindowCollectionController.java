@@ -137,6 +137,12 @@ public class MainWindowCollectionController {
 
     @FXML
     public void onActionInfo (ActionEvent actionEvent) throws IOException {
+        if (enterRouteController != null) {
+            Stage stage = (Stage) enterRouteController.getNameField().getScene( ).getWindow( );
+            stage.close( );
+            alreadyOpened = false;
+        }
+
         info.cancelButtonProperty( );
         String result = mainWindowCollectionModel.infoCommand( );
 
@@ -147,6 +153,11 @@ public class MainWindowCollectionController {
 
     @FXML
     public void onActionSumOfDistance (ActionEvent actionEvent) throws IOException {
+        if (enterRouteController != null) {
+            Stage stage = (Stage) enterRouteController.getNameField().getScene( ).getWindow( );
+            stage.close( );
+            alreadyOpened = false;
+        }
         String result = mainWindowCollectionModel.sumOfDistanceCommand( );
 
         if (!alreadyOpened) nextStep(result);
@@ -155,6 +166,11 @@ public class MainWindowCollectionController {
 
     @FXML
     public void onActionHistory (ActionEvent actionEvent) throws IOException {
+        if (enterRouteController != null) {
+            Stage stage = (Stage) enterRouteController.getNameField().getScene( ).getWindow( );
+            stage.close( );
+            alreadyOpened = false;
+        }
         String result = mainWindowCollectionModel.historyCommand( );
 
         if (!alreadyOpened) nextStep(result);
@@ -163,6 +179,10 @@ public class MainWindowCollectionController {
 
     @FXML
     public void onActionClear (ActionEvent actionEvent) throws IOException {
+        if (enterRouteController != null) {
+            Stage stage = (Stage) enterRouteController.getNameField().getScene( ).getWindow( );
+            stage.close( );
+        }
         String result = mainWindowCollectionModel.clearCommand( );
 
 //        if (!alreadyOpened) nextStep(result);
@@ -171,6 +191,11 @@ public class MainWindowCollectionController {
 
     @FXML
     public void onActionPrintAscending (ActionEvent actionEvent) throws IOException {
+        if (enterRouteController != null) {
+            Stage stage = (Stage) enterRouteController.getNameField().getScene( ).getWindow( );
+            stage.close( );
+            alreadyOpened = false;
+        }
     }
 
     @FXML
@@ -178,21 +203,20 @@ public class MainWindowCollectionController {
         if (commandResultController != null) {
             Stage stage = (Stage) commandResultController.getText( ).getScene( ).getWindow( );
             stage.close( );
+            alreadyOpened = false;
         }
 
-        openEnterRoute( );
 
-//        if (!alreadyOpened) openEnterRoute( );
-//        else {
-//            Stage stage1 = (Stage) enterRouteController.getNameField( ).getScene( ).getWindow( );
-//            stage1.close( );
-//
-//            openEnterRoute( );
-//        }
+        if (!alreadyOpened) openEnterRoute( );
+        else {
+            Stage stage1 = (Stage) enterRouteController.getNameField( ).getScene( ).getWindow( );
+            stage1.close( );
+
+            openEnterRoute( );
+        }
     }
 
     public void doAdd ( ) throws IOException {
-        System.out.println(1);
         mainWindowCollectionModel.addCommand(clientProviding.getUserManager( ).getRoute( ));
     }
 
@@ -221,13 +245,7 @@ public class MainWindowCollectionController {
                         }
                     });
 
-//                    try {
-//                        while (!isRouteReady && stage.isShowing( )) ;
-//                        mainWindowCollectionModel.addCommand(clientProviding.getUserManager( ).getRoute( ));
-//                        isRouteReady = false;
-//                    } catch (IOException e) {
-//                        e.printStackTrace( );
-//                    }
+
                 });
             }
         });
@@ -237,11 +255,21 @@ public class MainWindowCollectionController {
 
     @FXML
     public void onActionRemoveLower (ActionEvent actionEvent) {
+        if (enterRouteController != null) {
+            Stage stage = (Stage) enterRouteController.getNameField().getScene( ).getWindow( );
+            stage.close( );
+            alreadyOpened = false;
+        }
 
     }
 
     @FXML
     public void onActionRemoveGreater (ActionEvent actionEvent) {
+        if (enterRouteController != null) {
+            Stage stage = (Stage) enterRouteController.getNameField().getScene( ).getWindow( );
+            stage.close( );
+            alreadyOpened = false;
+        }
 
     }
 
@@ -281,6 +309,7 @@ public class MainWindowCollectionController {
         alreadyOpened = false;
 
         setColumns(clientProviding.getRoutes());
+        clientProviding.clientWork();
     }
 
     public void setColumns (LinkedHashSet<Route> routes) throws IOException {

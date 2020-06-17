@@ -179,6 +179,10 @@ public class UserManager {
         return (available.get(command).endsWith("e"));
     }
 
+    public HashMap<String, String> getAvailable ( ) {
+        return available;
+    }
+
     public Route getRoute ( ) {
         return route;
     }

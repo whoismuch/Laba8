@@ -23,13 +23,14 @@ public class ServerConnection implements Runnable {
     private CommandDescription command;
     private String authenticationResult;
     private List<Socket> clients;
+    private Socket listener;
     private Future a;
     private Future b;
     private Future c;
     private Future d;
 
 
-    public ServerConnection (Object request, Socket incoming, List<Socket> clients, DataBase db, RouteBook routeBook, Navigator navigator, Driver driver, ExecutorService executorService, SendToClient sendToClient) {
+    public ServerConnection (Object request, Socket incoming, Socket listener,  List<Socket> clients, DataBase db, RouteBook routeBook, Navigator navigator, Driver driver, ExecutorService executorService, SendToClient sendToClient) {
         this.request = request;
         this.incoming = incoming;
         this.db = db;
@@ -39,6 +40,7 @@ public class ServerConnection implements Runnable {
         this.executorService = executorService;
         this.sendToClient = sendToClient;
         this.clients = clients;
+
     }
 
 
@@ -54,7 +56,7 @@ public class ServerConnection implements Runnable {
 
             if (command.getName( ) == null) {
                 sendToClient.setMessage(authenticationResult);
-                navigator.getServerApp().notifyClients(routeBook.getRoutes());
+//                navigator.getServerApp().notifyClients(routeBook.getRoutes());
                 a = executorService.submit(sendToClient);
                 a.get( );
 

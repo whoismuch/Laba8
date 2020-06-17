@@ -46,6 +46,7 @@ public class AuthenticationController {
         authenticationResult.setText(result);
 
         nextStep(result);
+
     }
 
     @FXML

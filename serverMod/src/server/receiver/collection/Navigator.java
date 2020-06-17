@@ -295,7 +295,6 @@ public class Navigator implements ICollectionManager {
     @Override
     public void loadBegin ( ) {
         routeBook.setId(db.load(routeBook.getCollection( )));
-        serverApp.notifyClients(routeBook.getCollection());
     }
 
 }

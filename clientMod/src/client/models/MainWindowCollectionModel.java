@@ -3,7 +3,6 @@ package client.models;
 import common.generatedClasses.Route;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 public class MainWindowCollectionModel {
@@ -20,37 +19,27 @@ public class MainWindowCollectionModel {
 
     public String infoCommand() throws IOException {
         clientProviding.clientWork();
-        clientProviding.getMap();
-        clientProviding.sendCommand("info");
-        return clientProviding.getResult();
+        return clientProviding.sendCommand("info");
     }
 
     public String sumOfDistanceCommand () throws IOException {
         clientProviding.clientWork();
-        clientProviding.getMap();
-        clientProviding.sendCommand("sum_of_distance");
-        return clientProviding.getResult();
+        return clientProviding.sendCommand("sum_of_distance");
     }
 
     public String historyCommand ( ) throws IOException {
         clientProviding.clientWork();
-        clientProviding.getMap();
-        clientProviding.sendCommand("history");
-        return clientProviding.getResult();
+        return clientProviding.sendCommand("history");
     }
 
     public String clearCommand ( ) throws IOException {
         clientProviding.clientWork();
-        clientProviding.getMap();
-        clientProviding.sendCommand("clear");
-        return clientProviding.getResult();
+        return clientProviding.sendCommand("clear");
     }
 
     public void addCommand (Route route) throws IOException {
         clientProviding.clientWork();
-        clientProviding.getMap();
         clientProviding.sendCommand("add");
-        clientProviding.getResult();
     }
 
 }

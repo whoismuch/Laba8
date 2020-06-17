@@ -88,119 +88,13 @@ public class ClientProviding {
             userManager.setAvailable((HashMap) dataExchangeWithServer.getFromServer( ));
 
         } catch (IOException ex) {
-            System.out.println(1);
-            executorService.shutdown( );
+            System.out.println(173);
+//            executorService.shutdown( );
             clientWork( );
+        } catch (NullPointerException ex) {
         }
     }
 
-
-//    public void clientWork ( ) throws UnresolvedAddressException, NumberFormatException, IOException {
-//        try {
-//            SocketChannel outcomingchannel = SocketChannel.open( );
-//            SocketChannel notifyingchannel = SocketChannel.open( );
-//
-//            SocketAddress outcoming = new InetSocketAddress((address), Integer.parseInt(port));
-//
-//
-//            outcomingchannel.connect(outcoming);
-//            notifyingchannel.connect(outcoming);
-//
-//            this.outcomingchannel = outcomingchannel;
-//
-//
-//            this.outcoming = outcoming;
-//
-//            dataExchangeWithServer = new DataExchangeWithServer(outcomingchannel);
-//
-//
-//            selector = Selector.open( );
-//            outcomingchannel.configureBlocking(false);
-//            outcomingchannel.register(selector, SelectionKey.OP_READ);
-//
-//        }
-//        catch (NoSuchElementException ex) {
-//            userManager.writeln("Ну и зачем?");
-//        } catch (NullPointerException ex) {
-//            userManager.writeln("Упссс...У нас сетевые неполадочки");
-//            clientWork( );
-//        }
-//    }
-
-
-//    public void clientLaunch ( ) {
-//        try {
-//            String line = "check";
-//            while (!line.equals("exit")) {
-//
-//                while (alrightAuthentication == 0) {
-//                    selector.select( );
-//                    userManager.setAvailable((HashMap) dataExchangeWithServer.getFromServer( ));
-//                    authentication( );
-//                    CommandDescription command = new CommandDescription(null, null, null, username, password, choice);
-//                    dataExchangeWithServer.sendToServer(command);
-////                        if (getResult( )) {
-////                            choice = "A";
-////                            alrightAuthentication = 1;
-////                        }
-//                }
-//
-//
-//                if (everythingIsAlright) {
-//                    selector.select( );
-//                    userManager.setAvailable((HashMap) dataExchangeWithServer.getFromServer( ));
-//                }
-//
-//                everythingIsAlright = true;
-//
-//
-//                userManager.write("Введите команду: ");
-//                line = userManager.read( );
-//                line = line.trim( );
-//                commandname = line;
-//                arg = null;
-//                if (line.indexOf(" ") != -1) {
-//                    commandname = line.substring(0, line.indexOf(" "));
-//                    arg = (line.substring(line.indexOf(" "))).trim( );
-//                }
-//
-//                if (!userManager.checkCommandName(commandname)) {
-//                    everythingIsAlright = false;
-//                    continue;
-//                }
-//
-//                if (!userManager.checkArg(commandname, arg)) {
-//                    everythingIsAlright = false;
-//                    continue;
-//                }
-//
-//                if (userManager.checkFile(commandname)) {
-//                    arg = userManager.contentOfFile(arg);
-//                    userManager.setFinalScript(arg);
-//                    if (arg == null) {
-//                        everythingIsAlright = false;
-//                        continue;
-//                    } else {
-//                        int commandNumber = userManager.checkContentOfFile(arg, 0);
-//                        if (commandNumber == 0) {
-//                            userManager.writeln("Бе, скрипт с ошибочками, такой скрипт мы обработать не сможем\nПожалуй, исправьте скрипт и введите следующую команду");
-//                            continue;
-//                        }
-//                        arg = userManager.getFinalScript( );
-//                        sendCommand(commandname);
-////                        getResult( );
-//                    }
-//                } else {
-//                    sendCommand(commandname);
-////                    getResult( );
-//                }
-//
-//            }
-//
-//        } catch (IOException e) {
-////                clientWork( );
-//        }
-//    }
 
     public void exit ( ) {
         userManager.write("Завершение программы.");
@@ -219,13 +113,11 @@ public class ClientProviding {
                 command = new CommandDescription(commandname, arg, null, username, password, choice);
             }
 
+
             dataExchangeWithServer.sendToServer(command);
-            System.out.println(command.toString( ));
 
             selector.select( );
-            routes = (LinkedHashSet<Route>) dataExchangeWithServer.getFromServer( );
-            selector.select( );
-            String s = dataExchangeWithServer.getFromServer( ).toString( );
+            String s = getResult();
             return s;
         } catch (IOException ex) {
             clientWork( );
@@ -288,22 +180,27 @@ public class ClientProviding {
         this.address = address;
     }
 
-    public String authorization (String username, String password) throws IOException {
-        this.username = username;
-        this.password = password;
-        this.choice = "A";
-        if (username.contains(" ") || password.contains(" ")) {
-            return "Логин и пароль не должны содержать пробелы";
-        }
-        if (!checkLanguage(username) || !checkLanguage(password) || !checkLanguage(choice)) {
-            return ("Вам следует использовать только латиницу( Вините helios, не меня");
-        }
+    public String authorization (String username, String password) {
+        try {
+            this.username = username;
+            this.password = password;
+            this.choice = "A";
+            if (username.contains(" ") || password.contains(" ")) {
+                return "Логин и пароль не должны содержать пробелы";
+            }
+            if (!checkLanguage(username) || !checkLanguage(password) || !checkLanguage(choice)) {
+                return ("Вам следует использовать только латиницу( Вините helios, не меня");
+            }
 
-        CommandDescription command = new CommandDescription(null, null, null, username, password, choice);
-        dataExchangeWithServer.sendToServer(command);
+            CommandDescription command = new CommandDescription(null, null, null, username, password, choice);
+            dataExchangeWithServer.sendToServer(command);
 
-        String result = getResult( );
-        return result;
+            String result = getResult( );
+            return result;
+        } catch (IOException ex) {
+            clientWork( );
+        }
+        return "hehehe";
     }
 
     public String registration (String username, String password) throws IOException {

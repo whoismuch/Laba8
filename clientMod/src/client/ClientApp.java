@@ -21,6 +21,8 @@ public class ClientApp extends Application {
     private Stage primaryStage;
     private static ClientProviding clientProviding;
     private MainWindowCollectionController mainWindowCollectionController;
+    private String address;
+    private String port;
 
     /**
      * @param args массив по умолчанию в основном методе. Не используется здесь.
@@ -54,8 +56,10 @@ public class ClientApp extends Application {
         primaryStage.show( );
     }
 
-    public void showAthorization ( ) throws IOException {
+    public void showAthorization (String address, String port) throws IOException {
 
+        this.address = address;
+        this.port = port;
         InputStream stream = getClass( ).getResourceAsStream("fxmls/Authentication.fxml");
         FXMLLoader loader = new FXMLLoader( );
         VBox vBox = loader.load(stream);
@@ -83,9 +87,10 @@ public class ClientApp extends Application {
         MainWindowCollectionController mainWindowCollectionController = loader.getController( );
         MainWindowCollectionController mwcc = mainWindowCollectionController;
 
-        mwcc.setEverything(clientProviding, this);
+        mwcc.setEverything(clientProviding, this, address, port);
         loader.setController(mwcc);
         this.mainWindowCollectionController = mwcc;
+        clientProviding.setMainController(mwcc);
 
         Stage stage = new Stage( );
         stage.setTitle("RouteApp");

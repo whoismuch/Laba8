@@ -38,9 +38,11 @@ public class ClientNotifying implements Runnable {
             notifyingChannel.configureBlocking(false);
             notifyingChannel.register(selector, SelectionKey.OP_READ);
             while (true) {
+//                System.out.println(1);
                 selector.select( );
                 Object object = dataExchangeWithServer.getFromServer( );
                 LinkedHashSet<Route> routes = (LinkedHashSet<Route>) object;
+//                System.out.println(routes);
                 clientProviding.setRoutes(routes);
 
                 mainWindowCollectionController.setColumns(routes);

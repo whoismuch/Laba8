@@ -20,6 +20,8 @@ public class ConnectionController {
     private ClientProviding clientProviding;
     private ClientApp clientApp;
     private ConnectionModel connectionModel;
+    private String address;
+    private String port;
 
     @FXML
     private TextField tf1;
@@ -35,7 +37,9 @@ public class ConnectionController {
 
     @FXML
     public void onActionConnection (ActionEvent event) throws IOException, InterruptedException {
-        String result = connectionModel.connect(tf1.getText( ), tf2.getText( ));
+        address = tf1.getText();
+        port = tf2.getText();
+        String result = connectionModel.connect(address, port);
         buttonConnect.cancelButtonProperty( );
         connectionResult.setText(result);
 
@@ -54,7 +58,7 @@ public class ConnectionController {
                     Stage stage = (Stage) buttonConnect.getScene( ).getWindow( );
                     stage.close();
                     try {
-                        clientApp.showAthorization();
+                        clientApp.showAthorization(address, port);
                     } catch (IOException e) {
                         e.printStackTrace( );
                     }
