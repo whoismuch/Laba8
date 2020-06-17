@@ -12,10 +12,14 @@ import java.util.stream.Collectors;
  */
 public class RouteBook implements ICollection<Route> {
 
+    public LinkedHashSet<Route> getRoutes ( ) {
+        return routes;
+    }
+
     /**
      * Поле коллекция объектов класса Route
      */
-    public LinkedHashSet<Route> routes = new LinkedHashSet<>();
+    private LinkedHashSet<Route> routes = new LinkedHashSet<>();
     /**
      * Поле уникальный номер маршрута
      */

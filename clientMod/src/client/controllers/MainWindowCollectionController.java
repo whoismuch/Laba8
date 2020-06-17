@@ -1,6 +1,7 @@
 package client.controllers;
 
 import client.ClientApp;
+import client.ClientNotifying;
 import client.FullRoute;
 import client.models.ClientProviding;
 import client.models.MainWindowCollectionModel;
@@ -110,7 +111,7 @@ public class MainWindowCollectionController {
     private boolean alreadyOpened;
 
     @FXML
-    private void initialize ( ) {
+    private void initialize ( ) throws IOException {
         sum_of_distance.setWrapText(true);
         filter_less_than_distance.setWrapText(true);
         print_ascending.setWrapText(true);
@@ -131,6 +132,7 @@ public class MainWindowCollectionController {
         toX.setCellValueFactory(new PropertyValueFactory<FullRoute, Long>("toX"));
         toY.setCellValueFactory(new PropertyValueFactory<FullRoute, Long>("toY"));
         distance.setCellValueFactory(new PropertyValueFactory<FullRoute, Float>("distance"));
+
     }
 
     @FXML
@@ -163,13 +165,12 @@ public class MainWindowCollectionController {
     public void onActionClear (ActionEvent actionEvent) throws IOException {
         String result = mainWindowCollectionModel.clearCommand( );
 
-        if (!alreadyOpened) nextStep(result);
-        else commandResultController.setResult(result);
+//        if (!alreadyOpened) nextStep(result);
+//        else commandResultController.setResult(result);
     }
 
     @FXML
     public void onActionPrintAscending (ActionEvent actionEvent) throws IOException {
-        setColumns( );
     }
 
     @FXML
@@ -179,7 +180,7 @@ public class MainWindowCollectionController {
             stage.close( );
         }
 
-        openEnterRoute();
+        openEnterRoute( );
 
 //        if (!alreadyOpened) openEnterRoute( );
 //        else {
@@ -190,10 +191,9 @@ public class MainWindowCollectionController {
 //        }
     }
 
-    public void doAdd () throws IOException {
+    public void doAdd ( ) throws IOException {
         System.out.println(1);
-        mainWindowCollectionModel.addCommand(clientProviding.getUserManager().getRoute());
-        setColumns();
+        mainWindowCollectionModel.addCommand(clientProviding.getUserManager( ).getRoute( ));
     }
 
     public void openEnterRoute ( ) {
@@ -224,7 +224,6 @@ public class MainWindowCollectionController {
 //                    try {
 //                        while (!isRouteReady && stage.isShowing( )) ;
 //                        mainWindowCollectionModel.addCommand(clientProviding.getUserManager( ).getRoute( ));
-//                        setColumns( );
 //                        isRouteReady = false;
 //                    } catch (IOException e) {
 //                        e.printStackTrace( );
@@ -275,25 +274,24 @@ public class MainWindowCollectionController {
     }
 
 
-    public void setEverything (ClientProviding clientProviding, ClientApp clientApp) throws IOException {
+    public void setEverything (ClientProviding clientProviding, ClientApp clientApp, String address, String port) throws IOException {
         this.clientProviding = clientProviding;
         this.clientApp = clientApp;
         mainWindowCollectionModel = new MainWindowCollectionModel(clientProviding);
-
         alreadyOpened = false;
 
-        setColumns( );
+        setColumns(clientProviding.getRoutes());
     }
 
-    public void setColumns ( ) throws IOException {
-        LinkedHashSet<Route> routes = mainWindowCollectionModel.giveMeMyCollection( );
-        ObservableList<FullRoute> list = FXCollections.observableArrayList( );
-        for (Route route : routes) {
-            System.out.println(route + "\n" );
-            list.add(new FullRoute(route));
+    public void setColumns (LinkedHashSet<Route> routes) throws IOException {
+        try {
+            ObservableList<FullRoute> list = FXCollections.observableArrayList( );
+            for (Route route : routes) {
+                list.add(new FullRoute(route));
+            }
+            table.setItems(list);
+        } catch (IllegalStateException ex) {
         }
-        table.setItems(list);
+
     }
-
-
 }

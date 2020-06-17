@@ -197,7 +197,7 @@ public class DataBase {
                 route.setUsername(rs3.getString("username"));
                 routes.add(route);
 
-                finalId = id;
+                if (id > finalId) finalId = id;
             }
         } catch (SQLException e) {
             e.printStackTrace( );
@@ -278,6 +278,10 @@ public class DataBase {
         } catch (SQLException e) {
             e.printStackTrace( );
         }
+    }
+
+    public void notifyClients() {
+
     }
 
 

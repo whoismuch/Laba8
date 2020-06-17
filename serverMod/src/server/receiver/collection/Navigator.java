@@ -2,9 +2,11 @@ package server.receiver.collection;
 
 
 import server.armory.DataBase;
+import server.armory.ServerApp;
 import server.comparators.*;
 import common.generatedClasses.Route;
 
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -20,6 +22,13 @@ public class Navigator implements ICollectionManager {
     private ICollection<Route> routeBook;
     private ReadWriteLock lock;
     private DataBase db;
+    private ServerApp serverApp;
+    boolean in;
+
+    public void setServerApp (ServerApp serverApp) {
+        this.serverApp = serverApp;
+    }
+
 
     public Navigator (ICollection<Route> routeBook, DataBase db) {
         this.routeBook = routeBook;
@@ -55,7 +64,10 @@ public class Navigator implements ICollectionManager {
     public void add (Route route, String username) {
         lock.writeLock( ).lock( );
         try {
-            if (db.add(route, username)) routeBook.add(route);
+            if (db.add(route, username)) {
+                routeBook.add(route);
+                serverApp.notifyClients(routeBook.getCollection());
+            }
         } finally {
             lock.writeLock( ).unlock( );
         }
@@ -70,6 +82,7 @@ public class Navigator implements ICollectionManager {
         try {
             if (db.deleteRoutes(username)) {
                 routeBook.toList( ).stream( ).filter(x -> x.getUsername( ).equals(username)).forEach(routeBook::remove);
+                serverApp.notifyClients(routeBook.getCollection());
             }
         } finally {
             lock.writeLock( ).unlock( );
@@ -90,6 +103,7 @@ public class Navigator implements ICollectionManager {
                 List<Route> routes = routeBook.toList( ).stream( ).filter(x -> (x.getId( ) == id) && (x.getUsername( ).equals(username))).collect(Collectors.toList( ));
                 if (!routes.isEmpty( )) {
                     routes.forEach(routeBook::remove);
+                    serverApp.notifyClients(routeBook.getCollection());
                     return true;
                 }
                 return false;
@@ -131,6 +145,7 @@ public class Navigator implements ICollectionManager {
                 if (!routes.isEmpty( )) {
                     routes.forEach(routeBook::remove);
                     routeBook.add(id, route);
+                    serverApp.notifyClients(routeBook.getCollection());
                     return true;
                 }
             }
@@ -213,11 +228,14 @@ public class Navigator implements ICollectionManager {
     public void removeGreater (Route route, String username) {
         lock.writeLock( ).lock( );
         try {
-
+            in = false;
             routeBook.toList( ).stream( ).filter(x -> sort(route).indexOf(x) > sort(route).indexOf(route)).forEach(x -> {
                 if (db.removeById(x.getId( ), username)) {
                     routeBook.remove(x);
+                    in = true;
                 } });
+           if (in) serverApp.notifyClients(routeBook.getCollection());
+
         } finally {
             lock.writeLock( ).unlock( );
         }
@@ -232,8 +250,13 @@ public class Navigator implements ICollectionManager {
     public void removeLower (Route route, String username) {
         lock.writeLock( ).lock( );
         try {
+            in = false;
             routeBook.toList( ).stream( ).filter(x -> sort(route).indexOf(x) < sort(route).indexOf(route)).forEach(x -> {
-                if (db.removeById(x.getId( ), username)) routeBook.remove(x);
+                if (db.removeById(x.getId( ), username)) {
+                    routeBook.remove(x);
+                    in = true;
+                }
+                if (in) serverApp.notifyClients(routeBook.getCollection());
             });
         } finally {
             lock.writeLock( ).unlock( );
@@ -265,8 +288,14 @@ public class Navigator implements ICollectionManager {
         }
     }
 
+    public ServerApp getServerApp ( ) {
+        return serverApp;
+    }
+
     @Override
     public void loadBegin ( ) {
         routeBook.setId(db.load(routeBook.getCollection( )));
+        serverApp.notifyClients(routeBook.getCollection());
     }
+
 }

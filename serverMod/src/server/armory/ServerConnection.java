@@ -6,6 +6,7 @@ import server.receiver.collection.RouteBook;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class ServerConnection implements Runnable {
@@ -21,13 +22,14 @@ public class ServerConnection implements Runnable {
     private Object request;
     private CommandDescription command;
     private String authenticationResult;
+    private List<Socket> clients;
     private Future a;
     private Future b;
     private Future c;
     private Future d;
 
 
-    public ServerConnection (Object request, Socket incoming, DataBase db, RouteBook routeBook, Navigator navigator, Driver driver, ExecutorService executorService, SendToClient sendToClient) {
+    public ServerConnection (Object request, Socket incoming, List<Socket> clients, DataBase db, RouteBook routeBook, Navigator navigator, Driver driver, ExecutorService executorService, SendToClient sendToClient) {
         this.request = request;
         this.incoming = incoming;
         this.db = db;
@@ -36,6 +38,7 @@ public class ServerConnection implements Runnable {
         this.driver = driver;
         this.executorService = executorService;
         this.sendToClient = sendToClient;
+        this.clients = clients;
     }
 
 
@@ -49,15 +52,12 @@ public class ServerConnection implements Runnable {
 
             checkPassword( );
 
-            sendToClient.setMessage(routeBook.getCollection());
-            c = executorService.submit(sendToClient);
-
-            c.get();
-
             if (command.getName( ) == null) {
                 sendToClient.setMessage(authenticationResult);
+                navigator.getServerApp().notifyClients(routeBook.getRoutes());
                 a = executorService.submit(sendToClient);
                 a.get( );
+
             } else {
 
                 if (!everythingIsAlright) {
@@ -88,6 +88,10 @@ public class ServerConnection implements Runnable {
             }
             try {
                 incoming.close( );
+//                for (Socket socket : clients) {
+//                    clients.remove(socket);
+//                    socket.close();
+//                }
             } catch (IOException e) {
                 e.printStackTrace( );
             }
@@ -101,6 +105,7 @@ public class ServerConnection implements Runnable {
 
             String result = driver.execute(navigator, command.getName( ), command.getArg( ), command.getRoute( ), driver, command.getUsername( ));
 
+            System.out.println(result);
             sendToClient.setMessage(result);
             c = executorService.submit(sendToClient);
 

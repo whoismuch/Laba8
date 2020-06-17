@@ -7,6 +7,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.nio.channels.SocketChannel;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public class GetFromClient implements Runnable {
@@ -19,9 +21,10 @@ public class GetFromClient implements Runnable {
     private ExecutorService executorService;
     private SendToClient sendToClient;
     private Driver driver;
+    private List<Socket> clients;
 
 
-    public GetFromClient (Socket incoming, DataBase db, Navigator navigator, RouteBook routeBook, Driver driver, ExecutorService executorService, SendToClient sendToClient) {
+    public GetFromClient (Socket incoming, List<Socket> clients, DataBase db, Navigator navigator, RouteBook routeBook, Driver driver, ExecutorService executorService, SendToClient sendToClient) {
         this.incoming = incoming;
         this.db = db;
         this.navigator = navigator;
@@ -29,6 +32,7 @@ public class GetFromClient implements Runnable {
         this.executorService = executorService;
         this.sendToClient = sendToClient;
         this.driver = driver;
+        this.clients = clients;
     }
 
     public void run ( ) {
@@ -36,7 +40,7 @@ public class GetFromClient implements Runnable {
             ObjectInputStream get = new ObjectInputStream(incoming.getInputStream( ));
             obj = get.readObject( );
 
-            Thread childTread = new Thread(new ServerConnection(obj, incoming, db, routeBook, navigator, driver, executorService, sendToClient));
+            Thread childTread = new Thread(new ServerConnection(obj, incoming, clients, db, routeBook, navigator, driver, executorService, sendToClient));
             childTread.start( );
         } catch (EOFException e) {
             System.out.println("Клиент решил внезапно покинуть нас");
