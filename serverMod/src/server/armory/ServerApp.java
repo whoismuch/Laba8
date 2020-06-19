@@ -89,7 +89,6 @@ public class ServerApp {
                 baos.flush( );
                 send.close( );
             } catch (IOException ex) {
-                ex.printStackTrace();
             }
         }
     }

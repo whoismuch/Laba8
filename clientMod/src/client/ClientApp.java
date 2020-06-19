@@ -1,10 +1,8 @@
 package client;
 
-import client.controllers.AuthenticationController;
-import client.controllers.ConnectionController;
-import client.controllers.EnterRouteController;
-import client.controllers.MainWindowCollectionController;
+import client.controllers.*;
 import client.models.ClientProviding;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -134,6 +132,23 @@ public class ClientApp extends Application {
 
         return loader;
 
+    }
+
+    public FXMLLoader showEnterDistance() throws IOException {
+        InputStream stream = getClass( ).getResourceAsStream("fxmls/EnterDistance.fxml");
+        FXMLLoader loader = new FXMLLoader( );
+        BorderPane borderPane = loader.load(stream);
+
+        EnterDistanceController edc = loader.getController();
+        edc.setMainWindowCollectionController(mainWindowCollectionController);
+
+        Stage stage = new Stage( );
+        stage.setTitle("EnterDistance");
+        Scene scene = new Scene(borderPane);
+        stage.setScene(scene);
+        stage.show( );
+
+        return loader;
     }
 }
 

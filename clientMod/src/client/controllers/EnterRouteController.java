@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -22,6 +23,7 @@ public class EnterRouteController {
     private ClientApp clientApp;
     private EnterRouteModel enterRouteModel;
     private MainWindowCollectionController mainWindowCollectionController;
+
 
     @FXML
     public TextField coordinateXField;
@@ -63,7 +65,7 @@ public class EnterRouteController {
         return nameField;
     }
 
-    public void onActionDone (ActionEvent actionEvent) throws IOException {
+    public void onActionDone (ActionEvent actionEvent) throws IOException, InterruptedException {
         validationResult.setWrapText(true);
         String result = enterRouteModel.checkRoute (nameField.getText(), coordinateXField.getText(), coordinateYField.getText(), fromNameField.getText(), fromXField.getText(), fromYField.getText(), toNameField.getText(), toXField.getText(), toYField.getText(), distanceField.getText());
 
@@ -71,6 +73,17 @@ public class EnterRouteController {
 
         if (result.equals("Весьма симпатичный маршрут. Так держать")) {
             mainWindowCollectionController.doAdd();
+
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace( );
+                }
+                Platform.runLater(() -> {
+                Stage stage = (Stage) done.getScene( ).getWindow( );
+                stage.close( );
+            });}).start();
         }
     }
 

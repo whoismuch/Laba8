@@ -70,7 +70,7 @@ public class Driver {
      * @param line
      * @throws NoExecuteScriptInScript ошибка возникает, если в скрипте будет команда вызова скрипта
      */
-    public String execute (ICollectionManager icm, String line, String arg, Route route, Driver driver, String username) throws NoExecuteScriptInScript {
+    public Object execute (ICollectionManager icm, String line, String arg, Route route, Driver driver, String username) throws NoExecuteScriptInScript {
         lock.writeLock( ).lock( );
         try {
             if (!dequeHashMap.containsKey(username)) dequeHashMap.put(username, new ArrayDeque<>( ));
@@ -78,7 +78,7 @@ public class Driver {
             if (command == null) {
                 return "Неверное имя команды : " + line;
             } else {
-                String result = command.execute(icm, arg, route, driver, username);
+                Object result = command.execute(icm, arg, route, driver, username);
                 addHistory(line, username);
                 return result;
             }

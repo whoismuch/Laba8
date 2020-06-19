@@ -26,7 +26,7 @@ public interface ICollectionManager {
 
     void removeLower (Route route, String username);
 
-    public String printAscending ( );
+    public Object printAscending ( );
 
     boolean updateId (long id, Route route, String username);
 

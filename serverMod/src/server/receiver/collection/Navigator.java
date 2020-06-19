@@ -267,18 +267,14 @@ public class Navigator implements ICollectionManager {
      * Метод выводит элементы коллекции в порядке возрастания
      */
     @Override
-    public String printAscending ( ) {
+    public Object printAscending ( ) {
         lock.readLock( ).lock( );
         try {
-            if (sort( ).size( ) == 0) {
-                return "Коллекция пуста";
-            } else {
-                return sort( ).stream( ).map(x -> x.toString( )).collect(Collectors.joining("\n"));
-            }
+            if (sort( ).size( ) != 0) return sort();
         } finally {
             lock.readLock( ).unlock( );
         }
-
+        return "Коллекция ведь пуста";
     }
 
     @Override

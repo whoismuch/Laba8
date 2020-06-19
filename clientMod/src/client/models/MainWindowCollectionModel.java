@@ -1,9 +1,12 @@
 package client.models;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import common.generatedClasses.Route;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 public class MainWindowCollectionModel {
 
@@ -19,27 +22,43 @@ public class MainWindowCollectionModel {
 
     public String infoCommand() throws IOException {
         clientProviding.clientWork();
-        return clientProviding.sendCommand("info");
+        return clientProviding.sendCommand("info").toString();
     }
 
     public String sumOfDistanceCommand () throws IOException {
         clientProviding.clientWork();
-        return clientProviding.sendCommand("sum_of_distance");
+        return clientProviding.sendCommand("sum_of_distance").toString();
     }
 
     public String historyCommand ( ) throws IOException {
         clientProviding.clientWork();
-        return clientProviding.sendCommand("history");
+        return clientProviding.sendCommand("history").toString();
     }
 
     public String clearCommand ( ) throws IOException {
         clientProviding.clientWork();
-        return clientProviding.sendCommand("clear");
+        return clientProviding.sendCommand("clear").toString();
     }
 
     public void addCommand (Route route) throws IOException {
         clientProviding.clientWork();
         clientProviding.sendCommand("add");
+    }
+
+    public List<Route>  printAscendingCommand() throws IOException {
+        clientProviding.clientWork();
+        Object o = clientProviding.sendCommand("print_ascending");
+        if (o.getClass().equals("".getClass())) return null;
+        else return (List<Route>) o;
+    }
+
+    public List<Route> filterLessThanDistance(String dist) throws IOException {
+        clientProviding.clientWork();
+        clientProviding.setArg(dist);
+        Object o = clientProviding.sendCommand("filter_less_than_distance");
+        List<Route> list = new ArrayList<>();
+        if (o.getClass().equals("".getClass())) return list;
+        else return (List<Route>) o;
     }
 
 }

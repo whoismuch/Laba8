@@ -44,6 +44,11 @@ public class ClientProviding {
     private ExecutorService executorService;
     private int a;
     private ClientNotifying clientNotifying;
+    private Route route;
+
+    public void setRoute (Route route) {
+        this.route = route;
+    }
 
     public void setMainController (MainWindowCollectionController mainController) {
         this.mainController = mainController;
@@ -114,11 +119,11 @@ public class ClientProviding {
     }
 
 
-    public String sendCommand (String commandname) {
+    public Object sendCommand (String commandname) {
         try {
             CommandDescription command;
             if (userManager.checkElement(commandname)) {
-                Route route = userManager.getRoute( );
+                route = userManager.getRoute();
                 route.setUsername(username);
                 command = new CommandDescription(commandname, arg, route, username, password, choice);
             } else {
@@ -127,10 +132,7 @@ public class ClientProviding {
 
 
             dataExchangeWithServer.sendToServer(command);
-
-            selector.select( );
-            String s = getResult();
-            return s;
+            return getResult();
         } catch (IOException ex) {
             clientWork( );
         }
@@ -141,10 +143,13 @@ public class ClientProviding {
         return routes;
     }
 
-    public String getResult ( ) throws IOException {
+    public void setArg (String arg) {
+        this.arg = arg;
+    }
+
+    public Object getResult ( ) throws IOException {
         selector.select( );
-        String s = dataExchangeWithServer.getFromServer( ).toString( );
-        return s;
+        return dataExchangeWithServer.getFromServer( );
     }
 
     public void lostConnection ( ) {
@@ -192,7 +197,7 @@ public class ClientProviding {
         this.address = address;
     }
 
-    public String authorization (String username, String password) {
+    public Object authorization (String username, String password) {
         try {
             this.username = username;
             this.password = password;
@@ -207,15 +212,14 @@ public class ClientProviding {
             CommandDescription command = new CommandDescription(null, null, null, username, password, choice);
             dataExchangeWithServer.sendToServer(command);
 
-            String result = getResult( );
-            return result;
+            return getResult();
         } catch (IOException ex) {
             clientWork( );
         }
         return "hehehe";
     }
 
-    public String registration (String username, String password) throws IOException {
+    public Object registration (String username, String password) throws IOException {
         this.username = username;
         this.password = password;
         this.choice = "R";
@@ -228,9 +232,8 @@ public class ClientProviding {
 
         CommandDescription command = new CommandDescription(null, null, null, username, password, choice);
         dataExchangeWithServer.sendToServer(command);
-        String result = getResult( );
         choice = "A";
-        return result;
+        return getResult( );
     }
 
 //    public void getMap ( ) throws IOException {

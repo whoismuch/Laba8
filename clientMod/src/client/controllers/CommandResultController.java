@@ -3,8 +3,16 @@ package client.controllers;
 import javafx.fxml.FXML;
 
 import javafx.scene.control.TextArea;
+import javafx.stage.WindowEvent;
 
 public class CommandResultController {
+
+    private MainWindowCollectionController mainWindowCollectionController;
+
+    public void setMainWindowCollectionController (MainWindowCollectionController mainWindowCollectionController) {
+        this.mainWindowCollectionController = mainWindowCollectionController;
+    }
+
     @FXML
     private TextArea text;
 

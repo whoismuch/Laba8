@@ -35,9 +35,9 @@ public class FilterLessThanDistanceCommand implements Command {
      */
 
     @Override
-    public String execute(ICollectionManager icm, String arg, Route route, Driver driver, String username) {
+    public Object execute(ICollectionManager icm, String arg, Route route, Driver driver, String username) {
         Float distance = Float.parseFloat(arg);
-        return (distance < 1 ? "Аргумент должен быть больше 1, мы разве не предупредили?" : icm.filterLessThanDistance(distance).isEmpty( ) ? "ой, а таких элементов-то и нет :(" : icm.filterLessThanDistance(distance).stream( ).map(x -> x.toString( )).collect(Collectors.joining("\n")));
+        return (distance < 1 ? "Аргумент должен быть больше 1, мы разве не предупредили?" : icm.filterLessThanDistance(distance).isEmpty( ) ? "ой, а таких элементов-то и нет :(" : icm.filterLessThanDistance(distance));
     }
 
 

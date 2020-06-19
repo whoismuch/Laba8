@@ -84,7 +84,7 @@
                         </Button>
                         <Button fx:id="execute_script" mnemonicParsing="false" prefHeight="56.0" prefWidth="191.0" text="Выполнить скрипт" textAlignment="CENTER" />
                         <Button fx:id="clear" mnemonicParsing="false" onAction="#onActionClear" prefHeight="55.0" text="Очистить коллекцию" textAlignment="CENTER" />
-                        <Button fx:id="filter_less_than_distance" mnemonicParsing="false" prefHeight="56.0" prefWidth="237.0" text="Отфильтровать по дальности, меньше заданной" textAlignment="CENTER" />
+                        <Button fx:id="filter_less_than_distance" mnemonicParsing="false" onAction="#onActionFilterLess" prefHeight="56.0" prefWidth="237.0" text="Отфильтровать по дальности, меньше заданной" textAlignment="CENTER" />
                      </buttons>
                      <opaqueInsets>
                         <Insets />

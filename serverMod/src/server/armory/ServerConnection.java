@@ -107,7 +107,8 @@ public class ServerConnection implements Runnable {
 
         if (everythingIsAlright) {
 
-            String result = driver.execute(navigator, command.getName( ), command.getArg( ), command.getRoute( ), driver, command.getUsername( ));
+            Object result = driver.execute(navigator, command.getName( ), command.getArg( ), command.getRoute( ), driver, command.getUsername( ));
+
 
             sendToClient.setMessage(result);
             c = executorService.submit(sendToClient);
