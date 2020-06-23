@@ -13,15 +13,22 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import javafx.event.ActionEvent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
@@ -112,7 +119,12 @@ public class MainWindowCollectionController {
     @FXML
     private Button blup;
 
+    @FXML
+    private Canvas canvas;
+
     private String command;
+
+    private GraphicsContext gc;
 
 
     @FXML
@@ -137,6 +149,7 @@ public class MainWindowCollectionController {
         toX.setCellValueFactory(new PropertyValueFactory<FullRoute, Long>("toX"));
         toY.setCellValueFactory(new PropertyValueFactory<FullRoute, Long>("toY"));
         distance.setCellValueFactory(new PropertyValueFactory<FullRoute, Float>("distance"));
+
 
     }
 
@@ -219,10 +232,8 @@ public class MainWindowCollectionController {
             stage.close( );
         }
 
-        String result = mainWindowCollectionModel.clearCommand( );
+        mainWindowCollectionModel.clearCommand( );
 
-//        if (!alreadyOpened) nextStep(result);
-//        else commandResultController.setResult(result);
 
     }
 
@@ -299,8 +310,9 @@ public class MainWindowCollectionController {
         List<Route> list = mainWindowCollectionModel.filterLessThanDistance(dist);
         if (list != null) setColumnsByList(list);
     }
+
     public void doAdd ( ) throws IOException {
-        mainWindowCollectionModel.addCommand();
+        mainWindowCollectionModel.addCommand( );
 
     }
 
@@ -378,9 +390,9 @@ public class MainWindowCollectionController {
 
     }
 
-   public void doRemoveLower() {
-        mainWindowCollectionModel.removeLowerCommand();
-   }
+    public void doRemoveLower ( ) {
+        mainWindowCollectionModel.removeLowerCommand( );
+    }
 
     @FXML
     public void onActionRemoveGreater (ActionEvent actionEvent) {
@@ -396,12 +408,12 @@ public class MainWindowCollectionController {
             stage.close( );
         }
 
-        openEnterRoute();
+        openEnterRoute( );
 
     }
 
-    public void doRemoveGreater() {
-        mainWindowCollectionModel.removeGreaterCommand();
+    public void doRemoveGreater ( ) {
+        mainWindowCollectionModel.removeGreaterCommand( );
     }
 
 
@@ -448,11 +460,63 @@ public class MainWindowCollectionController {
             for (Route route : routes) {
                 list.add(new FullRoute(route));
             }
+            drawRoutes(routes);
             table.setItems(list);
         } catch (IllegalStateException ex) {
             ex.printStackTrace( );
         }
 
+    }
+
+    public void drawRoutes (LinkedHashSet<Route> routes) {
+        if (gc != null) gc.clearRect(0, 0, canvas.getWidth( ), canvas.getHeight( ));
+
+        Long scale = 0L;
+        for (Route route : routes) {
+            if (route.getFrom( ).getX( ) > scale) scale = route.getFrom( ).getX( );
+            if (route.getFrom( ).getY( ) > scale) scale = route.getFrom( ).getY( );
+            if (route.getTo( ).getX( ) > scale) scale = route.getTo( ).getX( );
+            if (route.getTo( ).getY( ) > scale) scale = route.getTo( ).getY( );
+        }
+
+        gc = canvas.getGraphicsContext2D( );
+        double gran = 140;
+        gc.strokeLine(canvas.getWidth( ) / 2.0, 0, canvas.getWidth( ) / 2.0, canvas.getHeight( ));
+        gc.strokeLine(0, canvas.getHeight( ) / 2.0, canvas.getWidth( ), canvas.getHeight( ) / 2.0);
+        if (!routes.isEmpty()) {
+            gc.fillText("-" + scale.toString( ), canvas.getWidth( ) / 2.0 - gran, canvas.getHeight( ) / 2.0 + 15);
+            gc.fillText(scale.toString( ), canvas.getWidth( ) / 2.0 + gran, canvas.getHeight( ) / 2.0 + 15);
+        }
+        gc.fillOval(canvas.getWidth( ) / 2.0 + gran - 2.5, canvas.getHeight( ) / 2.0 - 2, 5, 5);
+        gc.fillOval(canvas.getWidth( ) / 2.0 - gran + 2.5, canvas.getHeight( ) / 2.0 - 2, 5, 5);
+        gc.fillOval(canvas.getWidth( ) / 2.0 - 2.5, canvas.getHeight( ) / 2.0 + gran + 2.5, 5, 5);
+        gc.fillOval(canvas.getWidth( ) / 2.0 - 2.5, canvas.getHeight( ) / 2.0 - gran - 2.5, 5, 5);
+
+
+        for (Route route : routes) {
+
+            gc.beginPath( );
+            gc.moveTo((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale));
+            gc.quadraticCurveTo((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), ((canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) + (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale)) / 2.0 - gran/6, canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale));
+            gc.setStroke(Color.ORANGERED);
+            gc.stroke( );
+            gc.closePath( );
+            gc.setStroke(Color.BLACK);
+
+            gc.setFill(javafx.scene.paint.Color.ORANGERED);
+            gc.fillOval((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale) - 15, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 50, 30, 30);
+            gc.fillPolygon(new double[]{canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale - 15, canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale, canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale + 15}, new double[]{(canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 32, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 32}, 3);
+            gc.setFill(javafx.scene.paint.Color.WHITE);
+            gc.fillOval(canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale - 10, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 45, 20, 20);
+            gc.setFill(Color.BLACK);
+
+            gc.setFill(javafx.scene.paint.Color.ORANGERED);
+            gc.fillOval((canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale) - 15, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 50, 30, 30);
+            gc.fillPolygon(new double[]{canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale - 15, canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale, canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale + 15}, new double[]{(canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 32, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale), (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 32}, 3);
+            gc.setFill(javafx.scene.paint.Color.WHITE);
+            gc.fillOval(canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale - 10, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 45, 20, 20);
+            gc.setFill(Color.BLACK);
+        }
     }
 
     public void setColumnsByList (List<Route> listRoutes) throws IOException {

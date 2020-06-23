@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
@@ -8,8 +9,10 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <TabPane prefHeight="543.0" prefWidth="939.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.MainWindowCollectionController">
@@ -113,9 +116,86 @@
       </content>
     </Tab>
     <Tab text="Графика">
-      <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-      </content>
+         <content>
+            <AnchorPane>
+               <children>
+                  <VBox layoutY="375.0" prefHeight="0.0" prefWidth="939.0">
+                     <children>
+                        <HBox prefWidth="776.0">
+                           <children>
+                              <Label contentDisplay="RIGHT" prefHeight="25.0" prefWidth="185.0">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets right="32.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <ButtonBar prefHeight="59.0" prefWidth="796.0">
+                           <VBox.margin>
+                              <Insets right="20.0" top="8.0" />
+                           </VBox.margin>
+                           <buttons>
+                              <Button fx:id="sum_of_distance1" mnemonicParsing="false" onAction="#onActionSumOfDistance" prefHeight="53.0" prefWidth="191.0" text="Сумма дальностей маршрутов" textAlignment="CENTER" />
+                              <Button fx:id="history1" mnemonicParsing="false" onAction="#onActionHistory" prefHeight="53.0" prefWidth="354.0" text="История введенных команд" textAlignment="CENTER" />
+                              <Button fx:id="info1" mnemonicParsing="false" onAction="#onActionInfo" prefHeight="54.0" prefWidth="237.0" text="Информация о коллекции" textAlignment="CENTER" />
+                           </buttons>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </ButtonBar>
+                        <ButtonBar layoutX="50.0" layoutY="359.0" prefHeight="61.0" prefWidth="796.0">
+                           <buttons>
+                              <Button fx:id="add1" mnemonicParsing="false" onAction="#onActionAdd" prefHeight="55.0" prefWidth="191.0" text="Добавить маршрут" textAlignment="CENTER">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </Button>
+                              <Button fx:id="execute_script1" mnemonicParsing="false" prefHeight="56.0" prefWidth="191.0" text="Выполнить скрипт" textAlignment="CENTER" />
+                              <Button fx:id="clear1" mnemonicParsing="false" onAction="#onActionClear" prefHeight="55.0" text="Очистить коллекцию" textAlignment="CENTER" />
+                              <Button fx:id="filter_less_than_distance1" mnemonicParsing="false" onAction="#onActionFilterLess" prefHeight="56.0" prefWidth="237.0" text="Отфильтровать по дальности, меньше заданной" textAlignment="CENTER" />
+                           </buttons>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <VBox.margin>
+                              <Insets right="20.0" top="5.0" />
+                           </VBox.margin>
+                        </ButtonBar>
+                        <ButtonBar layoutX="50.0" layoutY="349.0" prefHeight="60.0" prefWidth="796.0">
+                           <buttons>
+                              <Button fx:id="print_ascending1" mnemonicParsing="false" onAction="#onActionPrintAscending" prefHeight="57.0" prefWidth="237.0" text="Вывести коллекцию в порядке возрастания" textAlignment="CENTER" />
+                              <Button fx:id="remove_greater1" mnemonicParsing="false" onAction="#onActionRemoveGreater" prefHeight="56.0" prefWidth="191.0" text="Удалить объекты, большие заданного" textAlignment="CENTER">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </Button>
+                              <Button fx:id="remove_lower1" mnemonicParsing="false" onAction="#onActionRemoveLower" prefHeight="55.0" prefWidth="191.0" text="Удалить объекты, меньшие заданного" textAlignment="CENTER" />
+                              <Button fx:id="blup1" mnemonicParsing="false" prefHeight="55.0" text="Можете пожамкать и снять стресс" textAlignment="CENTER" />
+                           </buttons>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <VBox.margin>
+                              <Insets bottom="10.0" right="20.0" top="5.0" />
+                           </VBox.margin>
+                        </ButtonBar>
+                     </children>
+                     <padding>
+                        <Insets left="40.0" right="15.0" top="3.0" />
+                     </padding>
+                  </VBox>
+                  <StackPane layoutX="36.0" layoutY="14.0">
+                     <children>
+                        <ImageView fitHeight="78.0" fitWidth="143.0" pickOnBounds="true" preserveRatio="true" />
+                        <Canvas fx:id="canvas" height="380.0" width="380.0" />
+                     </children>
+                  </StackPane>
+               </children>
+            </AnchorPane>
+         </content>
     </Tab>
   </tabs>
 </TabPane>
