@@ -187,43 +187,50 @@ public class UserManager {
         return route;
     }
 
-    public String checkRoute(int now, String name, String coordX, String coordY, String fromName, String fromX, String fromY, String toName, String toX, String toY, String distance){
-       try {
-           now = 1;
-           String r_name = name;
-           now = 2;
-           Long r_coordX = Long.parseLong(coordX);
-           now = 3;
-           int r_coordY = Integer.parseInt(coordY);
-           now = 4;
-           String r_fromName = fromName;
-           now = 5;
-           long r_fromX = Long.parseLong(fromX);
-           now = 6;
-           Long r_fromY = Long.parseLong(fromY);
-           now = 7;
-           String r_toName = toName;
-           now = 8;
-           long r_toX = Long.parseLong(toX);
-           now = 9;
-           Long r_toY = Long.parseLong(toY);
-           now = 10;
-           Float r_distance = Float.parseFloat(distance);
+    public String checkRoute (int now, String name, String coordX, String coordY, String fromName, String fromX, String fromY, String toName, String toX, String toY, String distance) {
+        try {
+            now = 1;
+            String r_name = name;
+            now = 2;
+            Long r_coordX = Long.parseLong(coordX);
+            now = 3;
+            int r_coordY = Integer.parseInt(coordY);
+            now = 4;
+            String r_fromName = fromName;
+            now = 5;
+            long r_fromX = Long.parseLong(fromX);
+            now = 6;
+            Long r_fromY = Long.parseLong(fromY);
+            now = 7;
+            String r_toName = toName;
+            now = 8;
+            long r_toX = Long.parseLong(toX);
+            now = 9;
+            Long r_toY = Long.parseLong(toY);
+            now = 10;
+            Float r_distance = Float.parseFloat(distance);
 
-           this.route = new Route(r_name, new Coordinates(r_coordX, r_coordY), new Location(r_fromName, r_fromX, r_fromY), new Location(r_toName, r_toX, r_toY), r_distance);
+            this.route = new Route(r_name, new Coordinates(r_coordX, r_coordY), new Location(r_fromName, r_fromX, r_fromY), new Location(r_toName, r_toX, r_toY), r_distance);
 
-       } catch (NumberFormatException ex) {
-           switch (now) {
-               case 2 : return "Текущая координата X должна быть целой чиселкой :)";
-               case 3 : return "Текущая координата Y должна быть целой чиселкой :)";
-               case 5: return "Координата X места отправления должна быть целой чиселкой :)";
-               case 6: return "Координата Y места отправления должна быть целой чиселкой :)";
-               case 8: return "Координата X места прибытия должна быть целой чиселкой :)";
-               case 9: return "Координата Y места прибытия должна быть целой чиселкой :)";
-               case 10: return "Дальность маршрута должна быть чиселкой с плавающей точкой :)";
-           }
-       }
-       return "Весьма симпатичный маршрут. Так держать";
+        } catch (NumberFormatException ex) {
+            switch (now) {
+                case 2:
+                    return "Текущая координата X должна быть целой чиселкой :)";
+                case 3:
+                    return "Текущая координата Y должна быть целой чиселкой :)";
+                case 5:
+                    return "Координата X места отправления должна быть целой чиселкой :)";
+                case 6:
+                    return "Координата Y места отправления должна быть целой чиселкой :)";
+                case 8:
+                    return "Координата X места прибытия должна быть целой чиселкой :)";
+                case 9:
+                    return "Координата Y места прибытия должна быть целой чиселкой :)";
+                case 10:
+                    return "Дальность маршрута должна быть чиселкой с плавающей точкой :)";
+            }
+        }
+        return "Весьма симпатичный маршрут. Так держать";
     }
 
     public boolean checkFieldsForScript (Scanner scanner) {
@@ -307,7 +314,7 @@ public class UserManager {
         return true;
     }
 
-    public int checkContentOfFile (String arg, int commandN) {
+    public int checkContentOfFile (String arg, int commandN) throws IOException {
         try {
             if (arg.equals("")) throw new NullPointerException( );
             CharArrayReader car = new CharArrayReader(arg.toCharArray( ));
@@ -360,38 +367,23 @@ public class UserManager {
         finalScript = previousArg.replace(lineWithExScript, presentArg);
     }
 
-    public String contentOfFile (String arg) {
-        try {
-            CharArrayWriter caw = new CharArrayWriter( );
-            CharBuffer charBuffer = CharBuffer.allocate(10);
-            File file = new File(arg);
+    public String contentOfFile (String arg) throws IOException {
+        CharArrayWriter caw = new CharArrayWriter( );
+        CharBuffer charBuffer = CharBuffer.allocate(10);
+        File file = new File(arg);
 
-            if (!file.exists( )) throw new FileNotFoundException( );
-            else if (!file.canRead( )) throw new NoPermissionsException("бе");
+        if (!file.exists( )) throw new FileNotFoundException( );
+        else if (!file.canRead( )) throw new NoPermissionsException("бе");
 
-            FileReader fileReader = new FileReader(file);
-            int n = 0;
-            while ((n = fileReader.read(charBuffer)) > 0) {
-                charBuffer.flip( );
-                caw.write(charBuffer.array( ), 0, n);
-            }
-
-            return caw.toString( );
-
-
-        } catch (NoPermissionsException e) {
-            writeln("Недостаточно прав для чтения скрипта");
-            return null;
-        } catch (FileNotFoundException e) {
-            writeln("Файла со скриптом по указанному пути не существует");
-            return null;
-        } catch (NullPointerException e) {
-            writeln("Файл пуст!");
-            return null;
-        } catch (IOException e) {
-            writeln("Ой, временные неполадки");
-            return null;
+        FileReader fileReader = new FileReader(file);
+        int n = 0;
+        while ((n = fileReader.read(charBuffer)) > 0) {
+            charBuffer.flip( );
+            caw.write(charBuffer.array( ), 0, n);
         }
+
+        return caw.toString( );
+
     }
 
     /**

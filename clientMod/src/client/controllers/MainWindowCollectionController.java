@@ -1,38 +1,37 @@
 package client.controllers;
 
 import client.ClientApp;
-import client.ClientNotifying;
 import client.FullRoute;
 import client.models.ClientProviding;
 import client.models.MainWindowCollectionModel;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import com.sun.webkit.dom.KeyboardEventImpl;
 import common.generatedClasses.Route;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import javafx.event.ActionEvent;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import sun.nio.cs.ext.MacThai;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.time.ZonedDateTime;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 public class MainWindowCollectionController {
 
@@ -42,7 +41,10 @@ public class MainWindowCollectionController {
     private CommandResultController commandResultController;
     private EnterRouteController enterRouteController;
     private EnterDistanceController enterDistanceController;
+    private EnterScriptController enterScriptController;
 
+    @FXML
+    private Label username;
 
     @FXML
     private TableView table;
@@ -122,6 +124,33 @@ public class MainWindowCollectionController {
     @FXML
     private Canvas canvas;
 
+    @FXML
+    private Label username1;
+
+    @FXML
+    private Tab collection;
+
+    @FXML
+    private Tab graphics;
+
+    @FXML
+    private Label user;
+
+    @FXML
+    private Label user1;
+
+    @FXML
+    private MenuButton language;
+
+    @FXML
+    private MenuButton language1;
+
+    @FXML
+    private TabPane tabPane;
+
+    @FXML
+    private TextField forFilter;
+
     private String command;
 
     private GraphicsContext gc;
@@ -151,7 +180,114 @@ public class MainWindowCollectionController {
         distance.setCellValueFactory(new PropertyValueFactory<FullRoute, Float>("distance"));
 
 
+        forFilter.textProperty( ).addListener((observable, oldValue, newValue) -> { // filter_area - текствое поле , куда ты будешь вводить текст дл€ фильтрации
+            List<Route> routeList = new ArrayList<>( );
+            try {
+                setColumnsByList(routeList);
+            } catch (IOException e) {
+                e.printStackTrace( );
+            }
+            ObservableList<Route> tableData = FXCollections.observableArrayList( );
+            tableData.addAll(clientProviding.getRoutes( )); // загружаю все объекты , которые есть в коллекции
+            FilteredList<Route> routes = new FilteredList<>(tableData, p -> true);
+            routes.setPredicate(route -> {
+                if (newValue == null || newValue.isEmpty( )) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase( );
+                try {
+                    if (route.getName( ).toLowerCase( ).contains(lowerCaseFilter)) { // проверка , есть ли в введеном поле часть имени моего класса
+                        return true;
+                    }
+
+                    try {
+                        if (route.getId( ).equals(Long.parseLong(lowerCaseFilter))) {
+                            return true;
+                        }
+                    } catch (NumberFormatException ex) {
+                    }
+
+                    if (route.getCreationDate().toString().contains(lowerCaseFilter)) {
+                        return true;
+                    }
+
+                    try {
+                        if (route.getCoordinates( ).getX( ).equals(Long.parseLong(lowerCaseFilter))) {
+                            return true;
+                        }
+                    } catch (NumberFormatException ex) {
+                    }
+
+                    try {
+                        if (route.getCoordinates( ).getY( ) == Long.parseLong(lowerCaseFilter)) {
+                            return true;
+                        }
+                    } catch (NumberFormatException ex) {
+                    }
+
+
+                    if (route.getUsername( ).toLowerCase( ).contains(lowerCaseFilter)) {
+                        return true;
+                    }
+
+                    if (route.getFrom( ).getName( ).toLowerCase( ).contains(lowerCaseFilter)) {
+                        return true;
+                    }
+
+                    try {
+                        if (route.getFrom( ).getX( ) == Long.parseLong(lowerCaseFilter)) {
+                            return true;
+                        }
+                    } catch (NumberFormatException ex) {
+                    }
+
+                    try {
+                        if (route.getFrom( ).getY( ).equals(Long.parseLong(lowerCaseFilter))) {
+                            return true;
+                        }
+                    } catch (NumberFormatException ex) {
+                    }
+
+                    if (route.getTo( ).getName( ).toLowerCase( ).contains(lowerCaseFilter)) {
+                        return true;
+                    }
+
+                    try {
+                        if (route.getTo( ).getX( ) == Long.parseLong(lowerCaseFilter)) {
+                            return true;
+                        }
+                    } catch (NumberFormatException ex) {
+                    }
+
+                    try {
+                        if (route.getTo( ).getY( ).equals(Long.parseLong(lowerCaseFilter))) {
+                            return true;
+                        }
+                    } catch (NumberFormatException ex) {
+                    }
+
+                    try {
+                        if (route.getDistance( ).equals(Float.parseFloat(lowerCaseFilter))) {
+                            return true;
+                        }
+                    } catch (NumberFormatException ex) {
+                    }
+
+
+                } catch (NullPointerException ex) {
+                    return false;
+                }
+
+                return false;
+            });
+            try {
+                setColumnsByList(routes);
+            } catch (IOException e) {
+                e.printStackTrace( );
+            }
+        });
     }
+
 
     @FXML
     public void onActionInfo (ActionEvent actionEvent) throws IOException {
@@ -165,7 +301,11 @@ public class MainWindowCollectionController {
             stage.close( );
         }
 
-        info.cancelButtonProperty( );
+        if (enterScriptController != null) {
+            Stage stage = (Stage) enterScriptController.getDone().getScene( ).getWindow( );
+            stage.close( );
+        }
+
         String result = mainWindowCollectionModel.infoCommand( );
 
         if (commandResultController != null) {
@@ -187,6 +327,11 @@ public class MainWindowCollectionController {
             stage.close( );
         }
 
+        if (enterScriptController != null) {
+            Stage stage = (Stage) enterScriptController.getDone().getScene( ).getWindow( );
+            stage.close( );
+        }
+
         String result = mainWindowCollectionModel.sumOfDistanceCommand( );
 
         if (commandResultController != null) {
@@ -204,6 +349,11 @@ public class MainWindowCollectionController {
 
         if (enterDistanceController != null) {
             Stage stage = (Stage) enterDistanceController.getDone( ).getScene( ).getWindow( );
+            stage.close( );
+        }
+
+        if (enterScriptController != null) {
+            Stage stage = (Stage) enterScriptController.getDone().getScene( ).getWindow( );
             stage.close( );
         }
 
@@ -232,6 +382,11 @@ public class MainWindowCollectionController {
             stage.close( );
         }
 
+        if (enterScriptController != null) {
+            Stage stage = (Stage) enterScriptController.getDone().getScene( ).getWindow( );
+            stage.close( );
+        }
+
         mainWindowCollectionModel.clearCommand( );
 
 
@@ -254,6 +409,11 @@ public class MainWindowCollectionController {
             stage.close( );
         }
 
+        if (enterScriptController != null) {
+            Stage stage = (Stage) enterScriptController.getDone().getScene( ).getWindow( );
+            stage.close( );
+        }
+
         List<Route> list = mainWindowCollectionModel.printAscendingCommand( );
         if (list != null) setColumnsByList(list);
     }
@@ -267,6 +427,11 @@ public class MainWindowCollectionController {
 
         if (commandResultController != null) {
             Stage stage = (Stage) commandResultController.getText( ).getScene( ).getWindow( );
+            stage.close( );
+        }
+
+        if (enterScriptController != null) {
+            Stage stage = (Stage) enterScriptController.getDone().getScene( ).getWindow( );
             stage.close( );
         }
 
@@ -294,6 +459,11 @@ public class MainWindowCollectionController {
             stage.close( );
         }
 
+        if (enterScriptController != null) {
+            Stage stage = (Stage) enterScriptController.getDone().getScene( ).getWindow( );
+            stage.close( );
+        }
+
 
         if (enterRouteController != null) {
             if (!enterRouteController.getNameField( ).getScene( ).getWindow( ).isShowing( )) openEnterRoute( );
@@ -306,6 +476,32 @@ public class MainWindowCollectionController {
 
     }
 
+    @FXML
+    public void onActionExecuteScript (ActionEvent actionEvent) throws IOException {
+        if (enterRouteController != null) {
+            Stage stage = (Stage) enterRouteController.getNameField( ).getScene( ).getWindow( );
+            stage.close( );
+        }
+
+        if (commandResultController != null) {
+            Stage stage = (Stage) commandResultController.getText( ).getScene( ).getWindow( );
+            stage.close( );
+        }
+
+        if (enterDistanceController!= null) {
+            Stage stage = (Stage) enterDistanceController.getDone().getScene().getWindow();
+            stage.close();
+        }
+
+        if (enterScriptController == null) {
+            openEnterScript();
+        } else {
+            Stage stage = (Stage) enterScriptController.getDone( ).getScene( ).getWindow( );
+            stage.close( );
+            openEnterScript();
+        }
+    }
+
     public void doFilterLess (String dist) throws IOException {
         List<Route> list = mainWindowCollectionModel.filterLessThanDistance(dist);
         if (list != null) setColumnsByList(list);
@@ -314,6 +510,36 @@ public class MainWindowCollectionController {
     public void doAdd ( ) throws IOException {
         mainWindowCollectionModel.addCommand( );
 
+    }
+
+    public String doExecScript (String arg) throws IOException {
+        return mainWindowCollectionModel.executeScriptCommand(arg);
+    }
+
+    public void openEnterScript () {
+        Thread thread = new Thread(new Runnable( ) {
+            @Override
+            public void run ( ) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace( );
+                }
+
+                Platform.runLater(( ) -> {
+                    FXMLLoader loader = null;
+                    try {
+                        loader = clientApp.showEnterScript( );
+                    } catch (IOException e) {
+                        e.printStackTrace( );
+                    }
+                    enterScriptController = loader.getController( );
+
+                });
+            }
+        });
+
+        thread.start( );
     }
 
     public void openEnterRoute ( ) {
@@ -386,6 +612,11 @@ public class MainWindowCollectionController {
             stage.close( );
         }
 
+        if (enterScriptController != null) {
+            Stage stage = (Stage) enterScriptController.getDone().getScene( ).getWindow( );
+            stage.close( );
+        }
+
         openEnterRoute( );
 
     }
@@ -405,6 +636,11 @@ public class MainWindowCollectionController {
 
         if (enterDistanceController != null) {
             Stage stage = (Stage) enterDistanceController.getDone( ).getScene( ).getWindow( );
+            stage.close( );
+        }
+
+        if (enterScriptController != null) {
+            Stage stage = (Stage) enterScriptController.getDone().getScene( ).getWindow( );
             stage.close( );
         }
 
@@ -444,14 +680,92 @@ public class MainWindowCollectionController {
     }
 
 
-    public void setEverything (ClientProviding clientProviding, ClientApp clientApp, String address, String port) throws IOException {
+    @FXML
+    public void onActionRussian (ActionEvent actionEvent) throws UnsupportedEncodingException {
+        ResourceBundle bundleRu = ResourceBundle.getBundle("Language");
+        changeLanguage(bundleRu);
+    }
+
+    @FXML
+    public void onActionEstlane (ActionEvent actionEvent) {
+        ResourceBundle bundleEst = ResourceBundle.getBundle("Language", new Locale("est", "EST"));
+        changeLanguage(bundleEst);
+    }
+
+    @FXML
+    public void onActionCatala (ActionEvent actionEvent) {
+        ResourceBundle bundleCat = ResourceBundle.getBundle("Language", new Locale("cat", "CAT"));
+        changeLanguage(bundleCat);
+    }
+
+    @FXML
+    public void onActionEnglish (ActionEvent actionEvent) {
+        ResourceBundle bundleEn = ResourceBundle.getBundle("Language", new Locale("en", "ZA"));
+        changeLanguage(bundleEn);
+    }
+
+
+    private void addAllDescendents (Parent parent, ArrayList<Node> nodes) {
+        for (Node node : parent.getChildrenUnmodifiable( )) {
+            if (!nodes.contains(node)) {
+                nodes.add(node);
+                if (node instanceof Parent) {
+                    if (!((Parent) node).getChildrenUnmodifiable( ).isEmpty( )) {
+                        addAllDescendents((Parent) node, nodes);
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    public void changeLanguage (ResourceBundle bundle) {
+        Parent root = username.getParent( ).getParent( ).getParent( ).getParent( );
+        ArrayList<Node> nodes = new ArrayList<>( );
+        addAllDescendents(root, nodes);
+        nodes.add(root);
+        int i = 0;
+        for (Node node : nodes) {
+            try {
+                if ((node instanceof Labeled) & (node != null) & !(node instanceof Cell)) {
+                    ((Labeled) node).setText(bundle.getString(node.getId( )));
+                }
+
+                if (node instanceof TableView) {
+                    for (Object columns : ((TableView) node).getColumns( )) {
+                        TableColumn<?, ?> column = (TableColumn) columns;
+                        column.setText(bundle.getString(column.getId( )));
+                    }
+                }
+
+                if (node instanceof TabPane) {
+                    for (Tab tab : ((TabPane) node).getTabs( )) {
+                        tab.setText(bundle.getString(tab.getId( )));
+
+                    }
+                }
+            } catch (NullPointerException | MissingResourceException ex) {
+            }
+        }
+
+    }
+
+
+    public void setEverything (ClientProviding clientProviding, ClientApp clientApp, String address, String port, TabPane tabPane) throws IOException {
         this.clientProviding = clientProviding;
         this.clientApp = clientApp;
+        this.tabPane = tabPane;
         mainWindowCollectionModel = new MainWindowCollectionModel(clientProviding);
         clientProviding.getClientNotifying( ).setMainWindowCollectionController(this);
 
         setColumns(clientProviding.getRoutes( ));
         clientProviding.clientWork( );
+
+        username.setText(clientProviding.getUsername( ));
+        username1.setText(clientProviding.getUsername( ));
+
+
     }
 
     public void setColumns (LinkedHashSet<Route> routes) throws IOException {
@@ -473,31 +787,31 @@ public class MainWindowCollectionController {
 
         Long scale = 0L;
         for (Route route : routes) {
-            if (route.getFrom( ).getX( ) > scale) scale = route.getFrom( ).getX( );
-            if (route.getFrom( ).getY( ) > scale) scale = route.getFrom( ).getY( );
-            if (route.getTo( ).getX( ) > scale) scale = route.getTo( ).getX( );
-            if (route.getTo( ).getY( ) > scale) scale = route.getTo( ).getY( );
+            if (Math.abs(route.getFrom( ).getX( )) > scale) scale = Math.abs(route.getFrom( ).getX( ));
+            if (Math.abs(route.getFrom( ).getY( )) > scale) scale = Math.abs(route.getFrom( ).getY( ));
+            if (Math.abs(route.getTo( ).getX( )) > scale) scale = Math.abs(route.getTo( ).getX( ));
+            if (Math.abs(route.getTo( ).getY( )) > scale) scale = Math.abs(route.getTo( ).getY( ));
         }
 
         gc = canvas.getGraphicsContext2D( );
-        double gran = 140;
+        double gran = 150;
         gc.strokeLine(canvas.getWidth( ) / 2.0, 0, canvas.getWidth( ) / 2.0, canvas.getHeight( ));
         gc.strokeLine(0, canvas.getHeight( ) / 2.0, canvas.getWidth( ), canvas.getHeight( ) / 2.0);
-        if (!routes.isEmpty()) {
+        if (!routes.isEmpty( )) {
             gc.fillText("-" + scale.toString( ), canvas.getWidth( ) / 2.0 - gran, canvas.getHeight( ) / 2.0 + 15);
             gc.fillText(scale.toString( ), canvas.getWidth( ) / 2.0 + gran, canvas.getHeight( ) / 2.0 + 15);
         }
         gc.fillOval(canvas.getWidth( ) / 2.0 + gran - 2.5, canvas.getHeight( ) / 2.0 - 2, 5, 5);
         gc.fillOval(canvas.getWidth( ) / 2.0 - gran + 2.5, canvas.getHeight( ) / 2.0 - 2, 5, 5);
-        gc.fillOval(canvas.getWidth( ) / 2.0 - 2.5, canvas.getHeight( ) / 2.0 + gran + 2.5, 5, 5);
-        gc.fillOval(canvas.getWidth( ) / 2.0 - 2.5, canvas.getHeight( ) / 2.0 - gran - 2.5, 5, 5);
+        gc.fillOval(canvas.getWidth( ) / 2.0 - 2.5, canvas.getHeight( ) / 2.0 + gran , 5, 5);
+        gc.fillOval(canvas.getWidth( ) / 2.0 - 2.5, canvas.getHeight( ) / 2.0 - gran , 5, 5);
 
 
         for (Route route : routes) {
 
             gc.beginPath( );
             gc.moveTo((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale));
-            gc.quadraticCurveTo((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), ((canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) + (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale)) / 2.0 - gran/6, canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale));
+            gc.quadraticCurveTo((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), ((canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) + (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale)) / 2.0 - gran / 6, canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale));
             gc.setStroke(Color.ORANGERED);
             gc.stroke( );
             gc.closePath( );

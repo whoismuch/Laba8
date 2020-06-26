@@ -71,4 +71,9 @@ public class MainWindowCollectionModel {
         clientProviding.sendCommand("remove_greater");
     }
 
+    public String executeScriptCommand (String arg) {
+        clientProviding.clientWork();
+        clientProviding.setArg(arg);
+        return clientProviding.sendCommand("execute_script").toString();
+    }
 }

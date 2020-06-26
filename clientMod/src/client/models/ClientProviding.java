@@ -119,6 +119,10 @@ public class ClientProviding {
     }
 
 
+    public String getUsername ( ) {
+        return username;
+    }
+
     public Object sendCommand (String commandname) {
         try {
             CommandDescription command;

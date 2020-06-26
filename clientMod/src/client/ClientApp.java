@@ -85,7 +85,7 @@ public class ClientApp extends Application {
         MainWindowCollectionController mainWindowCollectionController = loader.getController( );
         MainWindowCollectionController mwcc = mainWindowCollectionController;
 
-        mwcc.setEverything(clientProviding, this, address, port);
+        mwcc.setEverything(clientProviding, this, address, port, tabPane);
         loader.setController(mwcc);
         this.mainWindowCollectionController = mwcc;
         clientProviding.setMainController(mwcc);
@@ -149,6 +149,25 @@ public class ClientApp extends Application {
         stage.show( );
 
         return loader;
+    }
+
+    public FXMLLoader showEnterScript() throws IOException {
+        InputStream stream = getClass().getResourceAsStream("fxmls/EnterScript.fxml");
+        FXMLLoader loader = new FXMLLoader();
+        BorderPane borderPane = loader.load(stream);
+
+        EnterScriptController esc = loader.getController();
+        esc.setEverything(clientProviding, mainWindowCollectionController);
+
+
+        Stage stage = new Stage();
+        stage.setTitle("EnterScript");
+        Scene scene = new Scene(borderPane);
+        stage.setScene(scene);
+        stage.show();
+
+        return loader;
+
     }
 }
 
