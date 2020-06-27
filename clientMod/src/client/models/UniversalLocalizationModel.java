@@ -50,7 +50,7 @@ public class UniversalLocalizationModel {
 
                     }
                 }
-            } catch (NullPointerException | MissingResourceException ex) {
+            } catch (NullPointerException | MissingResourceException  ex) {
             }
         }
 
@@ -59,7 +59,7 @@ public class UniversalLocalizationModel {
     public void updateLabels(Labeled labeled, String example, ResourceBundle bundle) {
         try {
             labeled.setText(bundle.getString(example));
-        } catch (MissingResourceException ex) {
+        } catch (MissingResourceException | NullPointerException ex) {
 
         }
     }

@@ -23,7 +23,7 @@ public class ClientApp extends Application {
     private MainWindowCollectionController mainWindowCollectionController;
     private String address;
     private String port;
-    private ResourceBundle bundle;
+    private static ResourceBundle bundle;
     private static UniversalLocalizationModel universalLocalizationModel;
 
     /**
@@ -32,6 +32,7 @@ public class ClientApp extends Application {
     public static void main (String[] args) {
         clientProviding = new ClientProviding( );
         universalLocalizationModel = new UniversalLocalizationModel();
+        bundle = ResourceBundle.getBundle("Language");
         launch(args);
     }
 
@@ -47,7 +48,6 @@ public class ClientApp extends Application {
         BorderPane borderPane = loader.load(stream);
         // Отображаем сцену, содержащую корневой макет.
 
-        bundle = ResourceBundle.getBundle("Language");
         ConnectionController connectionController = loader.getController( );
         ConnectionController cc = connectionController;
         cc.setEverything(clientProviding, this, universalLocalizationModel, bundle);
@@ -60,23 +60,23 @@ public class ClientApp extends Application {
         primaryStage.show( );
     }
 
-    public void showAthorization (String address, String port) throws IOException {
+    public void showAthorization (String address, String port, ResourceBundle bundle) throws IOException {
 
         this.address = address;
         this.port = port;
         InputStream stream = getClass( ).getResourceAsStream("fxmls/Authentication.fxml");
         FXMLLoader loader = new FXMLLoader( );
-        VBox vBox = loader.load(stream);
+        BorderPane borderPane = loader.load(stream);
         // Отображаем сцену, содержащую корневой макет.
 
         AuthenticationController authenticationController = loader.getController( );
         AuthenticationController ac = authenticationController;
-        ac.setEverything(clientProviding, this, universalLocalizationModel);
+        ac.setEverything(clientProviding, this, universalLocalizationModel, bundle);
         loader.setController(ac);
 
         Stage stage = new Stage( );
         stage.setTitle("RouteApp");
-        Scene scene = new Scene(vBox);
+        Scene scene = new Scene(borderPane);
         stage.setScene(scene);
         stage.show( );
     }

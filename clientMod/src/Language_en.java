@@ -56,7 +56,19 @@ public class Language_en extends ListResourceBundle {
             {"Такого адреса, к сожалению, не существует", "Unfortunately, this address does not exist"},
             {"Порт должен быть циферкой", "Port must be a number"},
             {"Соединение установлено", "Connection established"},
-            {"buttonConnect", "Connect"}
+            {"buttonConnect", "Connect"},
+            {"inLK", "Account Login"},
+            {"user", "Login"},
+            {"pass", "Password"},
+            {"signUp", "Sign up"},
+            {"signIn", "Sign in"},
+            {"Пользователь с таким логином уже зарегистрирован. Может, вам стоит авторизоваться?", "A user with such a login is already registered. Maybe you should log in?"},
+            {"Вы успешно зарегистрировались", "You have successfully registered"},
+            {"Пользователь с таким логином не зарегистрирован", "A user with such a login is not registered"},
+            {"Вы успешно авторизовались", "You have successfully logged in"},
+            {"Вы ввели неправильный пароль", "You entered the wrong password"},
+            {"Вам следует использовать только латиницу( Вините helios, не меня", "You should only use the Latin alphabet (Blame helios, not me"}
+
     };
 
 }

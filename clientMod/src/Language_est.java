@@ -56,6 +56,17 @@ public class Language_est extends ListResourceBundle {
             {"Такого адреса, к сожалению, не существует", "Kahjuks pole seda aadressi olemas"},
             {"Порт должен быть циферкой", "Port peab olema number"},
             {"Соединение установлено", "Ühendus loodud"},
-            {"buttonConnect", "Ühendage"}
+            {"buttonConnect", "Ühendage"},
+            {"inLK", "Konto sisselogimine"},
+            {"user", "Sisselogimine"},
+            {"pass", "Parool"},
+            {"signUp", "Registreeri"},
+            {"signIn", "Sisselogimine"},
+            {"Пользователь с таким логином уже зарегистрирован. Может, вам стоит авторизоваться?", "Sellise sisselogimisega kasutaja on juba registreeritud. Võib-olla peaksite sisse logima?"},
+            {"Вы успешно зарегистрировались", "Olete edukalt registreerunud"},
+            {"Пользователь с таким логином не зарегистрирован", "Sellise sisselogimisega kasutaja pole registreeritud"},
+            {"Вы успешно авторизовались", "Olete edukalt sisse loginud"},
+            {"Вы ввели неправильный пароль", "Sisestasite vale parooli"},
+            {"Вам следует использовать только латиницу( Вините helios, не меня", "Te peaksite kasutama ainult ladina tähestikku (Blame helios, mitte mina"}
     };
 }

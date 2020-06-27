@@ -56,7 +56,18 @@ public class Language_cat extends ListResourceBundle {
             {"Такого адреса, к сожалению, не существует", "Malauradament, aquesta adreça no existeix"},
             {"Порт должен быть циферкой", "Port ha de ser un número"},
             {"Соединение установлено", "Connexió establerta"},
-            {"buttonConnect", "Сonnectar"}
+            {"buttonConnect", "Сonnectar"},
+            {"inLK", "Accés al compte"},
+            {"user", "Login"},
+            {"pass", "Contrasenya"},
+            {"signUp", "Registre"},
+            {"signIn", "Login"},
+            {"Пользователь с таким логином уже зарегистрирован. Может, вам стоит авторизоваться?", "Ja s’ha registrat un usuari amb un inici de sessió. Potser haureu d’iniciar sessió?"},
+            {"Вы успешно зарегистрировались", "Вы успешно зарегистрировались", "Us heu registrat correctament"},
+            {"Пользователь с таким логином не зарегистрирован", "Un usuari amb un inici de sessió no està registrat"},
+            {"Вы успешно авторизовались", "Heu entrat correctament"},
+            {"Вы ввели неправильный пароль", "Heu introduït la contrasenya equivocada"},
+            {"Вам следует использовать только латиницу( Вините helios, не меня", "Només heu d’utilitzar l’alfabet llatí (Blame helios, no jo)"}
     };
 
 }

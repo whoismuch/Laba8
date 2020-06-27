@@ -57,9 +57,7 @@ public class ConnectionController {
     public void onActionConnection (ActionEvent event) throws IOException, InterruptedException {
         address = tf1.getText( );
         port = tf2.getText( );
-        result = "";
         result = connectionModel.connect(address, port);
-        buttonConnect.cancelButtonProperty( );
         connectionResult.setText(bundle.getString(result));
 
         nextStep(result);
@@ -106,7 +104,7 @@ public class ConnectionController {
                     Stage stage = (Stage) buttonConnect.getScene( ).getWindow( );
                     stage.close( );
                     try {
-                        clientApp.showAthorization(address, port);
+                        clientApp.showAthorization(address, port, bundle);
                     } catch (IOException e) {
                         e.printStackTrace( );
                     }
@@ -123,7 +121,6 @@ public class ConnectionController {
         this.clientApp = clientApp;
         this.universalLocalizationModel = universalLocalizationModel;
         connectionModel = new ConnectionModel(clientProviding);
-        result = "";
         this.bundle = bundle;
         universalLocalizationModel.changeLanguage(connectionResult.getParent().getParent(), bundle);
     }
