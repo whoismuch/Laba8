@@ -3,16 +3,22 @@ package client.controllers;
 import client.ClientApp;
 import client.models.ClientProviding;
 import client.models.ConnectionModel;
+import client.models.UniversalLocalizationModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.*;
 
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public class ConnectionController {
 
@@ -22,6 +28,9 @@ public class ConnectionController {
     private ConnectionModel connectionModel;
     private String address;
     private String port;
+    private ResourceBundle bundle;
+    private UniversalLocalizationModel universalLocalizationModel;
+    private String result;
 
     @FXML
     private TextField tf1;
@@ -36,27 +45,66 @@ public class ConnectionController {
     private Label connectionResult;
 
     @FXML
+    private Label connect;
+
+    @FXML
+    private Label enterAddress;
+
+    @FXML
+    private Label enterPort;
+
+    @FXML
     public void onActionConnection (ActionEvent event) throws IOException, InterruptedException {
-        address = tf1.getText();
-        port = tf2.getText();
-        String result = connectionModel.connect(address, port);
+        address = tf1.getText( );
+        port = tf2.getText( );
+        result = "";
+        result = connectionModel.connect(address, port);
         buttonConnect.cancelButtonProperty( );
-        connectionResult.setText(result);
+        connectionResult.setText(bundle.getString(result));
 
         nextStep(result);
     }
 
-    public void nextStep(String result) throws IOException, InterruptedException {
-        new Thread(() -> {
-            if (result.equals("Соединение установлено")) {
+    @FXML
+    public void onActionRussian (ActionEvent actionEvent) throws UnsupportedEncodingException {
+        bundle = ResourceBundle.getBundle("Language");
+        universalLocalizationModel.changeLanguage(connectionResult.getParent( ).getParent( ), bundle);
+        universalLocalizationModel.updateLabels(connectionResult, result, bundle);
+    }
+
+    @FXML
+    public void onActionEstlane (ActionEvent actionEvent) {
+        bundle = ResourceBundle.getBundle("Language", new Locale("est", "EST"));
+        universalLocalizationModel.changeLanguage(connectionResult.getParent( ).getParent( ), bundle);
+        universalLocalizationModel.updateLabels(connectionResult, result, bundle);
+
+    }
+
+    @FXML
+    public void onActionCatala (ActionEvent actionEvent) {
+        bundle = ResourceBundle.getBundle("Language", new Locale("cat", "CAT"));
+        universalLocalizationModel.changeLanguage(connectionResult.getParent( ).getParent( ), bundle);
+        universalLocalizationModel.updateLabels(connectionResult, result, bundle);
+    }
+
+    @FXML
+    public void onActionEnglish (ActionEvent actionEvent) {
+        bundle = ResourceBundle.getBundle("Language", new Locale("en", "ZA"));
+        universalLocalizationModel.changeLanguage(connectionResult.getParent( ).getParent( ), bundle);
+        universalLocalizationModel.updateLabels(connectionResult, result, bundle);
+    }
+
+    public void nextStep (String result) throws IOException, InterruptedException {
+        new Thread(( ) -> {
+            if (bundle.getString(result).equals(bundle.getString("Соединение установлено"))) {
                 try {
                     Thread.sleep(1500);
                 } catch (InterruptedException e) {
                     e.printStackTrace( );
                 }
-                Platform.runLater(() -> {
+                Platform.runLater(( ) -> {
                     Stage stage = (Stage) buttonConnect.getScene( ).getWindow( );
-                    stage.close();
+                    stage.close( );
                     try {
                         clientApp.showAthorization(address, port);
                     } catch (IOException e) {
@@ -64,18 +112,21 @@ public class ConnectionController {
                     }
                 });
             }
-        }).start();
+        }).start( );
 
     }
 
 
-    public void setEverything (ClientProviding clientProviding, ClientApp clientApp) {
+    public void setEverything (ClientProviding clientProviding, ClientApp clientApp, UniversalLocalizationModel universalLocalizationModel, ResourceBundle bundle) {
 
         this.clientProviding = clientProviding;
         this.clientApp = clientApp;
+        this.universalLocalizationModel = universalLocalizationModel;
         connectionModel = new ConnectionModel(clientProviding);
+        result = "";
+        this.bundle = bundle;
+        universalLocalizationModel.changeLanguage(connectionResult.getParent().getParent(), bundle);
     }
-
 
 
 }

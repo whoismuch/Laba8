@@ -4,6 +4,7 @@ import client.ClientApp;
 import client.FullRoute;
 import client.models.ClientProviding;
 import client.models.MainWindowCollectionModel;
+import client.models.UniversalLocalizationModel;
 import com.sun.webkit.dom.KeyboardEventImpl;
 import common.generatedClasses.Route;
 import javafx.application.Platform;
@@ -23,6 +24,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.event.ActionEvent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.InputMethodEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -42,6 +44,8 @@ public class MainWindowCollectionController {
     private EnterRouteController enterRouteController;
     private EnterDistanceController enterDistanceController;
     private EnterScriptController enterScriptController;
+    private UniversalLocalizationModel universalLocalizationModel;
+    private ResourceBundle bundle;
 
     @FXML
     private Label username;
@@ -288,6 +292,10 @@ public class MainWindowCollectionController {
         });
     }
 
+    @FXML
+    public void onActionMouseClicked(MouseEvent mouseEvent) {
+//        double finalCoordX = (coord)
+    }
 
     @FXML
     public void onActionInfo (ActionEvent actionEvent) throws IOException {
@@ -682,80 +690,35 @@ public class MainWindowCollectionController {
 
     @FXML
     public void onActionRussian (ActionEvent actionEvent) throws UnsupportedEncodingException {
-        ResourceBundle bundleRu = ResourceBundle.getBundle("Language");
-        changeLanguage(bundleRu);
+        bundle = ResourceBundle.getBundle("Language");
+        universalLocalizationModel.changeLanguage(username.getParent().getParent().getParent().getParent(), bundle);
     }
 
     @FXML
     public void onActionEstlane (ActionEvent actionEvent) {
-        ResourceBundle bundleEst = ResourceBundle.getBundle("Language", new Locale("est", "EST"));
-        changeLanguage(bundleEst);
+        bundle = ResourceBundle.getBundle("Language", new Locale("est", "EST"));
+        universalLocalizationModel.changeLanguage(username.getParent().getParent().getParent().getParent(), bundle);
     }
 
     @FXML
     public void onActionCatala (ActionEvent actionEvent) {
-        ResourceBundle bundleCat = ResourceBundle.getBundle("Language", new Locale("cat", "CAT"));
-        changeLanguage(bundleCat);
+        bundle = ResourceBundle.getBundle("Language", new Locale("cat", "CAT"));
+        universalLocalizationModel.changeLanguage(username.getParent().getParent().getParent().getParent(), bundle);
     }
 
     @FXML
     public void onActionEnglish (ActionEvent actionEvent) {
-        ResourceBundle bundleEn = ResourceBundle.getBundle("Language", new Locale("en", "ZA"));
-        changeLanguage(bundleEn);
-    }
-
-
-    private void addAllDescendents (Parent parent, ArrayList<Node> nodes) {
-        for (Node node : parent.getChildrenUnmodifiable( )) {
-            if (!nodes.contains(node)) {
-                nodes.add(node);
-                if (node instanceof Parent) {
-                    if (!((Parent) node).getChildrenUnmodifiable( ).isEmpty( )) {
-                        addAllDescendents((Parent) node, nodes);
-                    }
-                }
-            }
-        }
+        bundle = ResourceBundle.getBundle("Language", new Locale("en", "ZA"));
+        universalLocalizationModel.changeLanguage(username.getParent().getParent().getParent().getParent(), bundle);
 
     }
 
 
-    public void changeLanguage (ResourceBundle bundle) {
-        Parent root = username.getParent( ).getParent( ).getParent( ).getParent( );
-        ArrayList<Node> nodes = new ArrayList<>( );
-        addAllDescendents(root, nodes);
-        nodes.add(root);
-        int i = 0;
-        for (Node node : nodes) {
-            try {
-                if ((node instanceof Labeled) & (node != null) & !(node instanceof Cell)) {
-                    ((Labeled) node).setText(bundle.getString(node.getId( )));
-                }
-
-                if (node instanceof TableView) {
-                    for (Object columns : ((TableView) node).getColumns( )) {
-                        TableColumn<?, ?> column = (TableColumn) columns;
-                        column.setText(bundle.getString(column.getId( )));
-                    }
-                }
-
-                if (node instanceof TabPane) {
-                    for (Tab tab : ((TabPane) node).getTabs( )) {
-                        tab.setText(bundle.getString(tab.getId( )));
-
-                    }
-                }
-            } catch (NullPointerException | MissingResourceException ex) {
-            }
-        }
-
-    }
-
-
-    public void setEverything (ClientProviding clientProviding, ClientApp clientApp, String address, String port, TabPane tabPane) throws IOException {
+    public void setEverything (ClientProviding clientProviding, ClientApp clientApp, String address, String port, TabPane tabPane, UniversalLocalizationModel universalLocalizationModel) throws IOException {
         this.clientProviding = clientProviding;
         this.clientApp = clientApp;
         this.tabPane = tabPane;
+        this.universalLocalizationModel = universalLocalizationModel;
         mainWindowCollectionModel = new MainWindowCollectionModel(clientProviding);
         clientProviding.getClientNotifying( ).setMainWindowCollectionController(this);
 

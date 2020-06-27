@@ -2,6 +2,7 @@ package client;
 
 import client.controllers.*;
 import client.models.ClientProviding;
+import client.models.UniversalLocalizationModel;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +14,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ResourceBundle;
 
 public class ClientApp extends Application {
 
@@ -21,12 +23,15 @@ public class ClientApp extends Application {
     private MainWindowCollectionController mainWindowCollectionController;
     private String address;
     private String port;
+    private ResourceBundle bundle;
+    private static UniversalLocalizationModel universalLocalizationModel;
 
     /**
      * @param args массив по умолчанию в основном методе. Не используется здесь.
      */
     public static void main (String[] args) {
         clientProviding = new ClientProviding( );
+        universalLocalizationModel = new UniversalLocalizationModel();
         launch(args);
     }
 
@@ -39,15 +44,16 @@ public class ClientApp extends Application {
 
         InputStream stream = getClass( ).getResourceAsStream("fxmls/Connection.fxml");
         FXMLLoader loader = new FXMLLoader( );
-        VBox vBox = loader.load(stream);
+        BorderPane borderPane = loader.load(stream);
         // Отображаем сцену, содержащую корневой макет.
 
+        bundle = ResourceBundle.getBundle("Language");
         ConnectionController connectionController = loader.getController( );
         ConnectionController cc = connectionController;
-        cc.setEverything(clientProviding, this);
+        cc.setEverything(clientProviding, this, universalLocalizationModel, bundle);
         loader.setController(cc);
 
-        Scene scene = new Scene(vBox);
+        Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
         primaryStage.show( );
 
@@ -65,7 +71,7 @@ public class ClientApp extends Application {
 
         AuthenticationController authenticationController = loader.getController( );
         AuthenticationController ac = authenticationController;
-        ac.setEverything(clientProviding, this);
+        ac.setEverything(clientProviding, this, universalLocalizationModel);
         loader.setController(ac);
 
         Stage stage = new Stage( );
@@ -85,7 +91,7 @@ public class ClientApp extends Application {
         MainWindowCollectionController mainWindowCollectionController = loader.getController( );
         MainWindowCollectionController mwcc = mainWindowCollectionController;
 
-        mwcc.setEverything(clientProviding, this, address, port, tabPane);
+        mwcc.setEverything(clientProviding, this, address, port, tabPane, universalLocalizationModel);
         loader.setController(mwcc);
         this.mainWindowCollectionController = mwcc;
         clientProviding.setMainController(mwcc);
@@ -101,6 +107,9 @@ public class ClientApp extends Application {
         InputStream stream = getClass( ).getResourceAsStream("fxmls/CommandResult.fxml");
         FXMLLoader loader = new FXMLLoader( );
         BorderPane borderPane = loader.load(stream);
+
+        CommandResultController commandResultController = loader.getController();
+        commandResultController.setEverything(universalLocalizationModel);
 
         Stage stage = new Stage( );
         stage.setTitle("CommandResult");
@@ -121,7 +130,7 @@ public class ClientApp extends Application {
 
         erc.setMainWindowCollectionController(mainWindowCollectionController);
 
-        erc.setEverything(clientProviding, this);
+        erc.setEverything(clientProviding, this, universalLocalizationModel);
         loader.setController(erc);
 
         Stage stage = new Stage( );
@@ -140,7 +149,7 @@ public class ClientApp extends Application {
         BorderPane borderPane = loader.load(stream);
 
         EnterDistanceController edc = loader.getController();
-        edc.setMainWindowCollectionController(mainWindowCollectionController);
+        edc.setEverything(mainWindowCollectionController, universalLocalizationModel);
 
         Stage stage = new Stage( );
         stage.setTitle("EnterDistance");
@@ -157,7 +166,7 @@ public class ClientApp extends Application {
         BorderPane borderPane = loader.load(stream);
 
         EnterScriptController esc = loader.getController();
-        esc.setEverything(clientProviding, mainWindowCollectionController);
+        esc.setEverything(clientProviding, mainWindowCollectionController, universalLocalizationModel);
 
 
         Stage stage = new Stage();

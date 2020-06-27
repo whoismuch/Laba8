@@ -47,6 +47,16 @@ public class Language_cat extends ListResourceBundle {
             {"toName", "Nom de l'arribada"},
             {"toX", "Arribada X"},
             {"toY", "Arrival Y"},
-            {"distance", "Distance"}};
+            {"distance", "Distance"},
+            {"connect", "Establir una connexió..."},
+            {"enterAddress", "Introduïu l’adreça"},
+            {"enterPort", "Entra al port"},
+            {"Ууууу, в адресе не должно быть пробелов", "Uuuuu, no hi ha d'haver espais a l'adreça"},
+            {"Порт с пробелами, серьезно? Зачем?", "Port amb espais, seriosament? Per què?"},
+            {"Такого адреса, к сожалению, не существует", "Malauradament, aquesta adreça no existeix"},
+            {"Порт должен быть циферкой", "Port ha de ser un número"},
+            {"Соединение установлено", "Connexió establerta"},
+            {"buttonConnect", "Сonnectar"}
+    };
 
 }

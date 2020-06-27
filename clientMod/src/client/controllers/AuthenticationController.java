@@ -3,6 +3,7 @@ package client.controllers;
 import client.ClientApp;
 import client.models.AuthenticationModel;
 import client.models.ClientProviding;
+import client.models.UniversalLocalizationModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 
@@ -22,6 +23,7 @@ public class AuthenticationController {
     private ClientProviding clientProviding;
     private ClientApp clientApp;
     private AuthenticationModel authenticationModel;
+    private UniversalLocalizationModel universalLocalizationModel;
 
     @FXML
     private TextField username;
@@ -81,9 +83,10 @@ public class AuthenticationController {
     }
 
 
-    public void setEverything (ClientProviding clientProviding, ClientApp clientApp) {
+    public void setEverything (ClientProviding clientProviding, ClientApp clientApp, UniversalLocalizationModel universalLocalizationModel) {
         this.clientProviding = clientProviding;
         this.clientApp = clientApp;
+        this.universalLocalizationModel = universalLocalizationModel;
         authenticationModel = new AuthenticationModel(clientProviding);
     }
 

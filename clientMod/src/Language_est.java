@@ -47,5 +47,15 @@ public class Language_est extends ListResourceBundle {
             {"toName", "Saabumise nimi"},
             {"toX", "Saabumine X"},
             {"toY", "Saabumine Y"},
-            {"distance", "Distance"}};
+            {"distance", "Distance"},
+            {"connect", "looge ühendus..."},
+            {"enterAddress", "Enter Address"},
+            {"enterPort", "Enter Port"},
+            {"Ууууу, в адресе не должно быть пробелов", "Uuuuu, aadressis ei tohi olla tühikuid"},
+            {"Порт с пробелами, серьезно? Зачем?", "Tühikutega sadam, tõsiselt? Miks?"},
+            {"Такого адреса, к сожалению, не существует", "Kahjuks pole seda aadressi olemas"},
+            {"Порт должен быть циферкой", "Port peab olema number"},
+            {"Соединение установлено", "Ühendus loodud"},
+            {"buttonConnect", "Ühendage"}
+    };
 }

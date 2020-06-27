@@ -1,6 +1,7 @@
 package client.controllers;
 
 import client.models.ClientProviding;
+import client.models.UniversalLocalizationModel;
 import common.exceptions.NoPermissionsException;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -16,10 +17,7 @@ import java.io.IOException;
 public class EnterScriptController {
     private MainWindowCollectionController mainWindowCollectionController;
     private ClientProviding clientProviding;
-
-    public void setMainWindowCollectionController (MainWindowCollectionController mainWindowCollectionController) {
-        this.mainWindowCollectionController = mainWindowCollectionController;
-    }
+    private UniversalLocalizationModel universalLocalizationModel;
 
     @FXML
     private TextArea nameScript;
@@ -77,8 +75,9 @@ public class EnterScriptController {
         }
     }
 
-    public void setEverything (ClientProviding clientProviding, MainWindowCollectionController mainWindowCollectionController) {
+    public void setEverything (ClientProviding clientProviding, MainWindowCollectionController mainWindowCollectionController, UniversalLocalizationModel universalLocalizationModel) {
         this.clientProviding = clientProviding;
         this.mainWindowCollectionController = mainWindowCollectionController;
+        this.universalLocalizationModel = universalLocalizationModel;
     }
 }

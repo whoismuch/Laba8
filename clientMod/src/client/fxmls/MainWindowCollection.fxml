@@ -189,7 +189,7 @@
                         <Insets left="40.0" right="15.0" top="15.0" />
                      </padding>
                   </VBox>
-                  <Canvas fx:id="canvas" height="380.0" layoutX="36.0" layoutY="14.0" width="380.0" />
+                  <Canvas fx:id="canvas" height="380.0" layoutX="36.0" layoutY="14.0" onMouseClicked="#onActionMouseClicked" width="380.0" />
                   <HBox layoutX="2.0" layoutY="1.0" prefHeight="27.0" prefWidth="939.0">
                      <children>
                         <Label fx:id="user" alignment="CENTER" contentDisplay="RIGHT" prefHeight="27.0" prefWidth="128.0" text="Пользователь: ">
@@ -202,7 +202,7 @@
                               <Insets />
                            </HBox.margin>
                         </Label>
-                        <MenuButton fx:id="language" mnemonicParsing="false" prefHeight="27.0" prefWidth="173.0" text="Выберите язык">
+                        <MenuButton fx:id="language" mnemonicParsing="false" prefHeight="32.0" prefWidth="173.0" text="Выберите язык">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#onActionRussian" text="Русский" />
                             <MenuItem mnemonicParsing="false" onAction="#onActionEstlane" text="Eestlane" />

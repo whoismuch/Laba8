@@ -4,6 +4,7 @@ import client.ClientApp;
 import client.models.ClientProviding;
 import client.models.ConnectionModel;
 import client.models.EnterRouteModel;
+import client.models.UniversalLocalizationModel;
 import common.generatedClasses.Route;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -23,6 +24,7 @@ public class EnterRouteController {
     private ClientApp clientApp;
     private EnterRouteModel enterRouteModel;
     private MainWindowCollectionController mainWindowCollectionController;
+    private UniversalLocalizationModel universalLocalizationModel;
 
 
     @FXML
@@ -91,10 +93,11 @@ public class EnterRouteController {
 
 
 
-    public void setEverything (ClientProviding clientProviding, ClientApp clientApp) {
+    public void setEverything (ClientProviding clientProviding, ClientApp clientApp, UniversalLocalizationModel universalLocalizationModel) {
 
         this.clientProviding = clientProviding;
         this.clientApp = clientApp;
+        this.universalLocalizationModel = universalLocalizationModel;
         enterRouteModel = new EnterRouteModel(clientProviding);
     }
 

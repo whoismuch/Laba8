@@ -1,5 +1,6 @@
 package client.controllers;
 
+import client.models.UniversalLocalizationModel;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,10 +17,7 @@ import java.io.IOException;
 public class EnterDistanceController {
 
     private MainWindowCollectionController mainWindowCollectionController;
-
-    public void setMainWindowCollectionController (MainWindowCollectionController mainWindowCollectionController) {
-        this.mainWindowCollectionController = mainWindowCollectionController;
-    }
+    private UniversalLocalizationModel universalLocalizationModel;
 
     @FXML
     private TextArea distance;
@@ -41,28 +39,34 @@ public class EnterDistanceController {
         return done;
     }
 
-    public void onActionDone (ActionEvent actionEvent) throws IOException{
+    public void onActionDone (ActionEvent actionEvent) throws IOException {
         try {
-            dist = Float.parseFloat(distance.getText());
+            dist = Float.parseFloat(distance.getText( ));
             if (dist <= 1) result.setText("Расстояние должно быть > 1");
             else {
                 result.setText("Все супер");
                 mainWindowCollectionController.doFilterLess(dist.toString( ));
 
-                new Thread(() -> {
+                new Thread(( ) -> {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace( );
                     }
-                    Platform.runLater(() -> {
+                    Platform.runLater(( ) -> {
                         Stage stage = (Stage) done.getScene( ).getWindow( );
                         stage.close( );
-                    });}).start();
+                    });
+                }).start( );
 
             }
-        } catch (NumberFormatException  ex) {
+        } catch (NumberFormatException ex) {
             result.setText("Расстояние должно быть вещественной чиселкой");
         }
+    }
+
+    public void setEverything (MainWindowCollectionController mainWindowCollectionController, UniversalLocalizationModel universalLocalizationModel) {
+        this.mainWindowCollectionController = mainWindowCollectionController;
+        this.universalLocalizationModel = universalLocalizationModel;
     }
 }

@@ -47,6 +47,16 @@ public class Language_en extends ListResourceBundle {
             {"toName", "Arrival Name"},
             {"toX", "Arrival X"},
             {"toY", "Arrival Y"},
-            {"distance", "Distance"}};
+            {"distance", "Distance"},
+            {"connect", "Establish a connection..."},
+            {"enterAddress", "Enter Address"},
+            {"enterPort", "Enter Port"},
+            {"Ууууу, в адресе не должно быть пробелов", "Uuuuu, there must be no spaces in the address"},
+            {"Порт с пробелами, серьезно? Зачем?", "Port with spaces, seriously? Why?"},
+            {"Такого адреса, к сожалению, не существует", "Unfortunately, this address does not exist"},
+            {"Порт должен быть циферкой", "Port must be a number"},
+            {"Соединение установлено", "Connection established"},
+            {"buttonConnect", "Connect"}
+    };
 
 }
