@@ -66,6 +66,7 @@ public class ExecuteScriptCommand implements Command {
                                        new Coordinates(Long.parseLong(scanner.nextLine()), Integer.parseInt(scanner.nextLine())),
                                        new Location(scanner.nextLine(), Long.parseLong(scanner.nextLine()), Long.parseLong(scanner.nextLine())),
                                        new Location(scanner.nextLine(), Long.parseLong(scanner.nextLine()), Long.parseLong(scanner.nextLine())), Float.parseFloat(scanner.nextLine()));
+                    route.setUsername(username);
 
                 }
 

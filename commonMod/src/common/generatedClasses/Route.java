@@ -103,7 +103,7 @@ public class Route implements Comparable<Route>, Serializable {
     public String toString ( ) {
         return "Route{" +
                 "username=" + username +
-                "id=" + id +
+                ", id=" + id +
                 ", name='" + name + '\'' +
                 ", coordinates=" + coordinates +
                 ", creationDate=" + creationDate +

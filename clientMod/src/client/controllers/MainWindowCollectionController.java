@@ -783,6 +783,7 @@ public class MainWindowCollectionController {
     }
 
     public void drawRoutes (LinkedHashSet<Route> routes) {
+        HashMap<String, Color> colors = getColors(routes);
         if (gc != null) gc.clearRect(0, 0, canvas.getWidth( ), canvas.getHeight( ));
 
         Long scale = 0L;
@@ -794,7 +795,7 @@ public class MainWindowCollectionController {
         }
 
         gc = canvas.getGraphicsContext2D( );
-        double gran = 150;
+        double gran = 140;
         gc.strokeLine(canvas.getWidth( ) / 2.0, 0, canvas.getWidth( ) / 2.0, canvas.getHeight( ));
         gc.strokeLine(0, canvas.getHeight( ) / 2.0, canvas.getWidth( ), canvas.getHeight( ) / 2.0);
         if (!routes.isEmpty( )) {
@@ -812,25 +813,37 @@ public class MainWindowCollectionController {
             gc.beginPath( );
             gc.moveTo((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale));
             gc.quadraticCurveTo((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), ((canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) + (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale)) / 2.0 - gran / 6, canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale));
-            gc.setStroke(Color.ORANGERED);
+            gc.setStroke(colors.get(route.getUsername()));
             gc.stroke( );
             gc.closePath( );
             gc.setStroke(Color.BLACK);
 
-            gc.setFill(javafx.scene.paint.Color.ORANGERED);
+            gc.setFill(colors.get(route.getUsername()));
             gc.fillOval((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale) - 15, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 50, 30, 30);
             gc.fillPolygon(new double[]{canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale - 15, canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale, canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale + 15}, new double[]{(canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 32, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 32}, 3);
             gc.setFill(javafx.scene.paint.Color.WHITE);
             gc.fillOval(canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale - 10, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 45, 20, 20);
             gc.setFill(Color.BLACK);
 
-            gc.setFill(javafx.scene.paint.Color.ORANGERED);
+            gc.setFill(colors.get(route.getUsername()));
             gc.fillOval((canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale) - 15, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 50, 30, 30);
             gc.fillPolygon(new double[]{canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale - 15, canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale, canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale + 15}, new double[]{(canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 32, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale), (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 32}, 3);
             gc.setFill(javafx.scene.paint.Color.WHITE);
             gc.fillOval(canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale - 10, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 45, 20, 20);
             gc.setFill(Color.BLACK);
         }
+    }
+    public HashMap<String, Color> getColors(LinkedHashSet<Route> routes) {
+        HashMap<String, Color> map = new HashMap<>();
+        for (Route route: routes) {
+            int a = route.getUsername().hashCode();
+            Float r = (a % 1000) * 0.001f;
+            Float g = (a %  1000000) * 0.000001f;
+            Float b = (a % 100000000) * 0.000000001f;
+            Color color = Color.color(Math.abs(r), Math.abs(g) ,Math.abs(b));
+            map.put(route.getUsername(), color);
+        }
+        return map;
     }
 
     public void setColumnsByList (List<Route> listRoutes) throws IOException {
