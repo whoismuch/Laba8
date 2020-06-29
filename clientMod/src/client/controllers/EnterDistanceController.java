@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 public class EnterDistanceController {
 
@@ -20,15 +21,19 @@ public class EnterDistanceController {
     private UniversalLocalizationModel universalLocalizationModel;
 
     @FXML
-    private TextArea distance;
+    private TextField distanceED;
 
     @FXML
-    private Button done;
+    private Button doneED;
 
     @FXML
-    private Label result;
+    private Label resultED;
 
     private Float dist;
+
+    private ResourceBundle bundle;
+
+    private String result;
 
 
     public Float getDist ( ) {
@@ -36,15 +41,19 @@ public class EnterDistanceController {
     }
 
     public Button getDone ( ) {
-        return done;
+        return doneED;
     }
 
     public void onActionDone (ActionEvent actionEvent) throws IOException {
         try {
-            dist = Float.parseFloat(distance.getText( ));
-            if (dist <= 1) result.setText("Расстояние должно быть > 1");
+            dist = Float.parseFloat(distanceED.getText( ));
+            if (dist <= 1) {
+                result = "Расстояние должно быть > 1";
+                resultED.setText(bundle.getString(result));
+            }
             else {
-                result.setText("Все супер");
+                result = "Все супер";
+                resultED.setText(bundle.getString(result));
                 mainWindowCollectionController.doFilterLess(dist.toString( ));
 
                 new Thread(( ) -> {
@@ -54,19 +63,30 @@ public class EnterDistanceController {
                         e.printStackTrace( );
                     }
                     Platform.runLater(( ) -> {
-                        Stage stage = (Stage) done.getScene( ).getWindow( );
+                        Stage stage = (Stage) doneED.getScene( ).getWindow( );
                         stage.close( );
                     });
                 }).start( );
 
             }
         } catch (NumberFormatException ex) {
-            result.setText("Расстояние должно быть вещественной чиселкой");
+            result = "Расстояние должно быть вещественной чиселкой";
+            resultED.setText(bundle.getString(result));
         }
     }
 
-    public void setEverything (MainWindowCollectionController mainWindowCollectionController, UniversalLocalizationModel universalLocalizationModel) {
+    public void setEverything (MainWindowCollectionController mainWindowCollectionController, UniversalLocalizationModel universalLocalizationModel, ResourceBundle bundle) {
         this.mainWindowCollectionController = mainWindowCollectionController;
         this.universalLocalizationModel = universalLocalizationModel;
+        this.bundle = bundle;
+
+        Platform.runLater(() -> translate(bundle));
+
+    }
+
+    public void translate(ResourceBundle bundle) {
+        this.bundle = bundle;
+        universalLocalizationModel.changeLanguage(doneED.getParent(), bundle);
+        universalLocalizationModel.updateLabels(resultED, result, bundle);
     }
 }

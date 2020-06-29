@@ -100,7 +100,13 @@ public class LanguageCAT extends ListResourceBundle {
             {"Дальность маршрута должна быть чиселкой с плавающей точкой :)", "La distància de la ruta ha de ser un número amb un punt flotant :)"},
             {"Весьма симпатичный маршрут. Так держать", "Una ruta molt maca. Continua"},
             {"Имя маршрута не может быть пустым", "El nom de la ruta no pot estar buit"},
-            {"Дальность маршрута должна быть >1", "La distància de la ruta hauria de ser> 1"}
+            {"Дальность маршрута должна быть >1", "La distància de la ruta hauria de ser> 1"},
+
+            {"enterDistanceED", "Introduïu l’interval"},
+            {"doneED", "Fet"},
+            {"Расстояние должно быть > 1", "La distància ha de ser> 1"},
+            {"Все супер", "Tot és super"},
+            {"Расстояние должно быть вещественной чиселкой", "La distància ha de ser un nombre real"}
     };
 
 }

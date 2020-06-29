@@ -47,6 +47,7 @@ public class CommandResultController {
     }
 
     public void translate(ResourceBundle bundle) {
+        this.bundle = bundle;
         universalLocalizationModel.changeLanguage(text.getParent(), bundle);
     }
 }

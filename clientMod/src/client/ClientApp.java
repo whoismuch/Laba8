@@ -144,13 +144,13 @@ public class ClientApp extends Application {
 
     }
 
-    public FXMLLoader showEnterDistance ( ) throws IOException {
+    public FXMLLoader showEnterDistance (ResourceBundle bundle ) throws IOException {
         InputStream stream = getClass( ).getResourceAsStream("fxmls/EnterDistance.fxml");
         FXMLLoader loader = new FXMLLoader( );
         BorderPane borderPane = loader.load(stream);
 
         EnterDistanceController edc = loader.getController( );
-        edc.setEverything(mainWindowCollectionController, universalLocalizationModel);
+        edc.setEverything(mainWindowCollectionController, universalLocalizationModel, bundle);
 
         Stage stage = new Stage( );
         stage.setTitle("EnterDistance");

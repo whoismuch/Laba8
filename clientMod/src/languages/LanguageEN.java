@@ -100,7 +100,13 @@ public class LanguageEN extends ListResourceBundle {
             {"Дальность маршрута должна быть чиселкой с плавающей точкой :)", "The distance of the route should be a number with a floating point :)"},
             {"Весьма симпатичный маршрут. Так держать", "A very nice route. Keep it up"},
             {"Имя маршрута не может быть пустым", "Route name cannot be empty"},
-            {"Дальность маршрута должна быть >1", "The distance of the route should be> 1"}
+            {"Дальность маршрута должна быть >1", "The distance of the route should be> 1"},
+
+            {"enterDistanceED", "Enter Range"},
+            {"doneED", "Done"},
+            {"Расстояние должно быть > 1", "Distance must be> 1"},
+            {"Все супер", "Everything is super"},
+            {"Расстояние должно быть вещественной чиселкой", "Distance must be a real number"}
 
     };
 

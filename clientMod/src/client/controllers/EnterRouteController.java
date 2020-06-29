@@ -112,6 +112,7 @@ public class EnterRouteController {
     }
 
     public void translate(ResourceBundle bundle) {
+        this.bundle = bundle;
         universalLocalizationModel.changeLanguage(doneER.getParent(), bundle);
         universalLocalizationModel.updateLabels(validationResult, result, bundle);
     }

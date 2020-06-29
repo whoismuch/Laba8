@@ -101,7 +101,13 @@ public class LanguageEST extends ListResourceBundle {
             {"Дальность маршрута должна быть чиселкой с плавающей точкой :)", "Marsruudi vahemaa peaks olema ujuva punktiga arv :)"},
             {"Весьма симпатичный маршрут. Так держать", "Väga kena marsruut. Hoia üles"},
             {"Имя маршрута не может быть пустым", "Marsruudi nimi ei saa olla tühi"},
-            {"Дальность маршрута должна быть >1", "Marsruudi vahemaa peaks olema> 1"}
+            {"Дальность маршрута должна быть >1", "Marsruudi vahemaa peaks olema> 1"},
+
+            {"enterDistanceED", "Sisestage vahemik"},
+            {"doneED", "Done"},
+            {"Расстояние должно быть > 1", "Kaugus peab olema> 1"},
+            {"Все супер", "Kõik on super"},
+            {"Расстояние должно быть вещественной чиселкой", "Kaugus peab olema reaalarv"}
 
     };
 }

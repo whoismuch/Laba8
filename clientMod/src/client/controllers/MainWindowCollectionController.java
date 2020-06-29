@@ -540,7 +540,7 @@ public class MainWindowCollectionController {
                 Platform.runLater(( ) -> {
                     FXMLLoader loader = null;
                     try {
-                        loader = clientApp.showEnterDistance( );
+                        loader = clientApp.showEnterDistance(bundle);
                     } catch (IOException e) {
                         e.printStackTrace( );
                     }
@@ -636,6 +636,7 @@ public class MainWindowCollectionController {
 
         if (commandResultController != null) commandResultController.translate(bundle);
         if (enterRouteController != null) enterRouteController.translate(bundle);
+        if (enterDistanceController != null) enterDistanceController.translate(bundle);
     }
 
     @FXML
@@ -644,6 +645,7 @@ public class MainWindowCollectionController {
         universalLocalizationModel.changeLanguage(username.getParent( ).getParent( ).getParent( ).getParent( ), bundle);
         if (commandResultController != null) commandResultController.translate(bundle);
         if (enterRouteController != null) enterRouteController.translate(bundle);
+        if (enterDistanceController != null) enterDistanceController.translate(bundle);
 
     }
 
@@ -653,6 +655,7 @@ public class MainWindowCollectionController {
         universalLocalizationModel.changeLanguage(username.getParent( ).getParent( ).getParent( ).getParent( ), bundle);
         if (commandResultController != null) commandResultController.translate(bundle);
         if (enterRouteController != null) enterRouteController.translate(bundle);
+        if (enterDistanceController != null) enterDistanceController.translate(bundle);
     }
 
     @FXML
@@ -661,6 +664,7 @@ public class MainWindowCollectionController {
         universalLocalizationModel.changeLanguage(username.getParent( ).getParent( ).getParent( ).getParent( ), bundle);
         if (commandResultController != null) commandResultController.translate(bundle);
         if (enterRouteController != null) enterRouteController.translate(bundle);
+        if (enterDistanceController != null) enterDistanceController.translate(bundle);
     }
 
 
