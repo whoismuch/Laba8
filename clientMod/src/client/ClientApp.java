@@ -161,13 +161,13 @@ public class ClientApp extends Application {
         return loader;
     }
 
-    public FXMLLoader showEnterScript ( ) throws IOException {
+    public FXMLLoader showEnterScript (ResourceBundle bundle) throws IOException {
         InputStream stream = getClass( ).getResourceAsStream("fxmls/EnterScript.fxml");
         FXMLLoader loader = new FXMLLoader( );
         BorderPane borderPane = loader.load(stream);
 
         EnterScriptController esc = loader.getController( );
-        esc.setEverything(clientProviding, mainWindowCollectionController, universalLocalizationModel);
+        esc.setEverything(clientProviding, mainWindowCollectionController, universalLocalizationModel, bundle);
 
 
         Stage stage = new Stage( );

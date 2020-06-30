@@ -63,7 +63,7 @@ public class LanguageCAT extends ListResourceBundle {
             {"resultExecCom", "Resultat del comandament"},
             {"Объект успешно добавлен в коллекцию!", "L'objecte s'ha afegit amb èxit a la col·lecció!"},
             {"Объекты, принадлежащие вам, были успешно удалены", "Els objectes que us pertanyen s'han suprimit amb èxit"},
-            {"\nСкрипт выполнен", "\nScript executat"},
+            {"Скрипт выполнен", "Script executat"},
             {"ой, а таких элементов-то и нет :(", "oh, però no hi ha aquests elements :("},
             {"Вы еще ничего не вводили", "Encara no has entrat res"},
             {"Время инициализации коллекции: ", "Temps d'inicialització de la col·lecció: "},
@@ -106,7 +106,16 @@ public class LanguageCAT extends ListResourceBundle {
             {"doneED", "Fet"},
             {"Расстояние должно быть > 1", "La distància ha de ser> 1"},
             {"Все супер", "Tot és super"},
-            {"Расстояние должно быть вещественной чиселкой", "La distància ha de ser un nombre real"}
+            {"Расстояние должно быть вещественной чиселкой", "La distància ha de ser un nombre real"},
+
+            {"fileName", "Introduïu el nom del fitxer on es troba el guió"},
+            {"Ммм, скрипт пустой", "Mmm, the script is buit"},
+            {"Бе, скрипт с ошибочками, такой скрипт мы обработать не сможем", "Be, un script amb errors, no podem processar aquest script"},
+            {"Все супер", "Tot és super"},
+            {"Недостаточно прав для чтения скрипта", "No hi ha prou drets per llegir el guió"},
+            {"Файла со скриптом по указанному пути не существует", "No existeix un fitxer amb un script a la ruta especificada"},
+            {"Файл пуст!", "El fitxer és buit!"}
+
     };
 
 }

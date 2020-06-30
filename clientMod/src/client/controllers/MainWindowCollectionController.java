@@ -466,7 +466,7 @@ public class MainWindowCollectionController {
 
     }
 
-    public String doExecScript (String arg) throws IOException {
+    public String doExecScript (String arg) throws IOException{
         return mainWindowCollectionModel.executeScriptCommand(arg);
     }
 
@@ -483,7 +483,7 @@ public class MainWindowCollectionController {
                 Platform.runLater(( ) -> {
                     FXMLLoader loader = null;
                     try {
-                        loader = clientApp.showEnterScript( );
+                        loader = clientApp.showEnterScript(bundle);
                     } catch (IOException e) {
                         e.printStackTrace( );
                     }
@@ -637,6 +637,7 @@ public class MainWindowCollectionController {
         if (commandResultController != null) commandResultController.translate(bundle);
         if (enterRouteController != null) enterRouteController.translate(bundle);
         if (enterDistanceController != null) enterDistanceController.translate(bundle);
+        if (enterScriptController != null) enterScriptController.translate(bundle);
     }
 
     @FXML
@@ -646,6 +647,8 @@ public class MainWindowCollectionController {
         if (commandResultController != null) commandResultController.translate(bundle);
         if (enterRouteController != null) enterRouteController.translate(bundle);
         if (enterDistanceController != null) enterDistanceController.translate(bundle);
+        if (enterScriptController != null) enterScriptController.translate(bundle);
+
 
     }
 
@@ -656,6 +659,8 @@ public class MainWindowCollectionController {
         if (commandResultController != null) commandResultController.translate(bundle);
         if (enterRouteController != null) enterRouteController.translate(bundle);
         if (enterDistanceController != null) enterDistanceController.translate(bundle);
+        if (enterScriptController != null) enterScriptController.translate(bundle);
+
     }
 
     @FXML
@@ -665,6 +670,8 @@ public class MainWindowCollectionController {
         if (commandResultController != null) commandResultController.translate(bundle);
         if (enterRouteController != null) enterRouteController.translate(bundle);
         if (enterDistanceController != null) enterDistanceController.translate(bundle);
+        if (enterScriptController != null) enterScriptController.translate(bundle);
+
     }
 
 
@@ -698,7 +705,7 @@ public class MainWindowCollectionController {
             drawRoutes(routes);
             table.setItems(list);
         } catch (IllegalStateException ex) {
-            ex.printStackTrace( );
+            ex.printStackTrace();
         }
 
     }

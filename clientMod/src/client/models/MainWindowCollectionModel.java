@@ -72,7 +72,23 @@ public class MainWindowCollectionModel {
     }
 
     public String executeScriptCommand (String arg) throws IOException {
-        clientProviding.clientWork();
+        Thread thread = new Thread(new Runnable( ) {
+            @Override
+            public void run ( ) {
+                try {
+                    clientProviding.clientWork();
+                } catch (IOException e) {
+                    e.printStackTrace( );
+                }
+            }
+        });
+        thread.start();
+//        clientProviding.clientWork();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace( );
+        }
         clientProviding.setArg(arg);
         return clientProviding.sendCommand("execute_script").toString();
     }

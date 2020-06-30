@@ -47,12 +47,12 @@ public class DataExchangeWithServer {
     public Object getFromServer ( ) throws IOException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream( );
-            ByteBuffer byteBuffer = ByteBuffer.allocate(5000);
+            ByteBuffer byteBuffer = ByteBuffer.allocate(50000);
             int n = 0;
             while ((n = outcomingchannel.read(byteBuffer)) > 0) {
                 byteBuffer.flip( );
                 baos.write(byteBuffer.array( ), 0, n);
-                byteBuffer.clear();
+//                byteBuffer.clear();
             }
             ByteArrayInputStream bios = new ByteArrayInputStream(baos.toByteArray( ));
             ObjectInputStream ois = new ObjectInputStream(bios);
@@ -62,7 +62,7 @@ public class DataExchangeWithServer {
             e.printStackTrace( );
             return null;
         } catch (EOFException e) {
-            return "kek";
+           return "Ойойой, не так быстро, данные не успевают дойти";
         }
     }
 }

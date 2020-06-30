@@ -9,10 +9,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 public class EnterScriptController {
     private MainWindowCollectionController mainWindowCollectionController;
@@ -20,64 +22,75 @@ public class EnterScriptController {
     private UniversalLocalizationModel universalLocalizationModel;
 
     @FXML
-    private TextArea nameScript;
+    private TextField nameScript;
 
     @FXML
-    private Button done;
+    private Button doneED;
 
     @FXML
-    private Label result;
+    private Label resultES;
 
     @FXML
-    private TextArea commandResult;
+    private TextArea commandResultES;
 
+    private ResourceBundle bundle;
+
+    private String result;
+
+    private String scriptResult;
 
     public Button getDone ( ) {
-        return done;
+        return doneED;
     }
 
     public void onActionDone (ActionEvent actionEvent) throws IOException {
         try {
             String arg = clientProviding.getUserManager( ).contentOfFile(nameScript.getText( ));
             clientProviding.getUserManager( ).setFinalScript(arg);
-            if (arg == null) result.setText("Ммм, скрипт пустой");
-            else {
+            if (arg.equals("")) {
+                result = "Ммм, скрипт пустой";
+                resultES.setText(bundle.getString(result));
+            } else {
                 int commandNumber = clientProviding.getUserManager( ).checkContentOfFile(arg, 0);
                 if (commandNumber == 0) {
-                    result.setText("Бе, скрипт с ошибочками, такой скрипт мы обработать не сможем");
+                    result = "Бе, скрипт с ошибочками, такой скрипт мы обработать не сможем";
+                    resultES.setText(bundle.getString(result));
                 } else {
                     arg = clientProviding.getUserManager( ).getFinalScript( );
-                    result.setText("Все супер");
-                    commandResult.setText(mainWindowCollectionController.doExecScript(arg));
-
-
-//                    new Thread(( ) -> {
-//                        try {
-//                            Thread.sleep(1000);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace( );
-//                        }
-//                        Platform.runLater(( ) -> {
-//                            Stage stage = (Stage) done.getScene( ).getWindow( );
-//                            stage.close( );
-//                        });
-//                    }).start( );
-
+                    result = "Все супер";
+                    resultES.setText(bundle.getString(result));
+                    scriptResult = mainWindowCollectionController.doExecScript(arg);
+                    commandResultES.setText(universalLocalizationModel.translateMeAText(bundle, scriptResult));
                 }
             }
 
         } catch (NoPermissionsException e) {
-            result.setText("Недостаточно прав для чтения скрипта");
+            result = "Недостаточно прав для чтения скрипта";
+            resultES.setText(bundle.getString(result));
         } catch (FileNotFoundException e) {
-            result.setText("Файла со скриптом по указанному пути не существует");
+            result = "Файла со скриптом по указанному пути не существует";
+            resultES.setText(bundle.getString(result));
         } catch (NullPointerException e) {
-            result.setText("Файл пуст!");
+            result = "Файл пуст!";
+            resultES.setText(bundle.getString(result));
         }
     }
 
-    public void setEverything (ClientProviding clientProviding, MainWindowCollectionController mainWindowCollectionController, UniversalLocalizationModel universalLocalizationModel) {
+    public void setEverything (ClientProviding clientProviding, MainWindowCollectionController mainWindowCollectionController, UniversalLocalizationModel universalLocalizationModel, ResourceBundle bundle) {
         this.clientProviding = clientProviding;
         this.mainWindowCollectionController = mainWindowCollectionController;
         this.universalLocalizationModel = universalLocalizationModel;
+        this.bundle = bundle;
+        Platform.runLater(( ) -> translate(bundle));
+
+    }
+
+    public void translate (ResourceBundle bundle) {
+        this.bundle = bundle;
+        universalLocalizationModel.changeLanguage(doneED.getParent( ), bundle);
+        universalLocalizationModel.updateLabels(resultES, result, bundle);
+        if (scriptResult != null) {
+            commandResultES.setText(universalLocalizationModel.translateMeAText(bundle, scriptResult));
+        }
     }
 }

@@ -63,7 +63,7 @@ public class LanguageEST extends ListResourceBundle {
             {"resultExecCom", "käsu tulemus"},
             {"Объект успешно добавлен в коллекцию!", "Objekt lisati kollektsiooni edukalt!"},
             {"Объекты, принадлежащие вам, были успешно удалены", "Teile kuuluvad objektid on edukalt kustutatud"},
-            {"\nСкрипт выполнен", "\nScript teostatud"},
+            {"Скрипт выполнен", "Script teostatud"},
             {"ой, а таких элементов-то и нет :(", "oh, aga selliseid elemente pole :("},
             {"Вы еще ничего не вводили", "Te pole veel midagi sisestanud"},
             {"Время инициализации коллекции: ", "Kollektsiooni initsialiseerimise aeg: "},
@@ -104,10 +104,18 @@ public class LanguageEST extends ListResourceBundle {
             {"Дальность маршрута должна быть >1", "Marsruudi vahemaa peaks olema> 1"},
 
             {"enterDistanceED", "Sisestage vahemik"},
-            {"doneED", "Done"},
+            {"doneED", "Valmis"},
             {"Расстояние должно быть > 1", "Kaugus peab olema> 1"},
             {"Все супер", "Kõik on super"},
-            {"Расстояние должно быть вещественной чиселкой", "Kaugus peab olema reaalarv"}
+            {"Расстояние должно быть вещественной чиселкой", "Kaugus peab olema reaalarv"},
+
+            {"fileName", "Sisestage selle faili nimi, kus skript asub"},
+            {"Ммм, скрипт пустой", "Mmm, skript on tühi"},
+            {"Бе, скрипт с ошибочками, такой скрипт мы обработать не сможем", "Ole, vigadega skript, me ei saa sellist skripti töödelda"},
+            {"Все супер", "Kõik on super"},
+            {"Недостаточно прав для чтения скрипта", "Skripti lugemiseks pole piisavalt õigusi"},
+            {"Файла со скриптом по указанному пути не существует", "Määratud tee skriptiga faili pole olemas"},
+            {"Файл пуст!", "Fail on tühi!"}
 
     };
 }

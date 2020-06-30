@@ -335,15 +335,15 @@ public class UserManager {
 
 
                 if (!checkCommandNameForScript(commandname) || !checkArgForScript(commandname, argue)) {
-                    writeln("В строке № " + commandNumber + " ошибка");
-                    writeln("Если у вас присутсвуют вложенные скрипты, то нумерация строк выполняется согласно вложенности");
+//                    writeln("В строке № " + commandNumber + " ошибка");
+//                    writeln("Если у вас присутсвуют вложенные скрипты, то нумерация строк выполняется согласно вложенности");
                     return 0;
                 }
 
                 if (checkElement(commandname)) {
                     if (!checkFieldsForScript(scanner)) {
-                        writeln("В строке № " + commandNumber + " ошибка (неправильный ввод объекта в дальнейшем)");
-                        writeln("Если у вас присутсвуют вложенные скрипты, то нумерация строк выполняется согласно вложенности");
+//                        writeln("В строке № " + commandNumber + " ошибка (неправильный ввод объекта в дальнейшем)");
+//                        writeln("Если у вас присутсвуют вложенные скрипты, то нумерация строк выполняется согласно вложенности");
                         return 0;
                     }
                 }
@@ -370,21 +370,28 @@ public class UserManager {
     }
 
     public String contentOfFile (String arg) throws IOException {
-        CharArrayWriter caw = new CharArrayWriter( );
-        CharBuffer charBuffer = CharBuffer.allocate(10);
-        File file = new File(arg);
+        try {
+            CharArrayWriter caw = new CharArrayWriter( );
+            CharBuffer charBuffer = CharBuffer.allocate(10);
+            File file = new File(arg);
 
-        if (!file.exists( )) throw new FileNotFoundException( );
-        else if (!file.canRead( )) throw new NoPermissionsException("бе");
 
-        FileReader fileReader = new FileReader(file);
-        int n = 0;
-        while ((n = fileReader.read(charBuffer)) > 0) {
-            charBuffer.flip( );
-            caw.write(charBuffer.array( ), 0, n);
+            if (!file.exists( )) throw new FileNotFoundException( );
+            else if (!file.canRead( )) throw new NoPermissionsException("бе");
+
+
+            FileReader fileReader = new FileReader(file);
+            int n = 0;
+            while ((n = fileReader.read(charBuffer)) > 0) {
+                charBuffer.flip( );
+                caw.write(charBuffer.array( ), 0, n);
+            }
+
+            return caw.toString( );
+        } catch (NullPointerException ex) {
+            ex.printStackTrace();
+            return "";
         }
-
-        return caw.toString( );
 
     }
 

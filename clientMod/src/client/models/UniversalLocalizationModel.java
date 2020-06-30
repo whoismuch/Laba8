@@ -10,11 +10,7 @@ import java.util.*;
 
 public class UniversalLocalizationModel {
 
-    private String normalResult;
-
-    public void setNormalResult (String normalResult) {
-        this.normalResult = normalResult;
-    }
+    private String normalCommandResult;
 
     private void addAllDescendents (Parent parent, ArrayList<Node> nodes) {
         for (Node node : parent.getChildrenUnmodifiable( )) {
@@ -52,14 +48,15 @@ public class UniversalLocalizationModel {
                 if (node instanceof TabPane) {
                     for (Tab tab : ((TabPane) node).getTabs( )) {
                         tab.setText(bundle.getString(tab.getId( )));
-
                     }
                 }
 
-                if (node instanceof TextArea) {
-                    TextArea textArea = (TextArea) node;
-                    textArea.setText(translateMeAText(bundle));
-                }
+//                if (node instanceof TextArea) {
+//                    if (node.getId().equals("text")) {
+//                        TextArea textArea = (TextArea) node;
+//                        textArea.setText(translateMeAText(bundle, normalCommandResult));
+//                    }
+//                }
             } catch (NullPointerException | MissingResourceException ex) {
             }
         }
@@ -73,8 +70,8 @@ public class UniversalLocalizationModel {
         }
     }
 
-    public String translateMeAText (ResourceBundle bundle) {
-        CharArrayReader car = new CharArrayReader(normalResult.toCharArray( ));
+    public String translateMeAText (ResourceBundle bundle, String result) {
+        CharArrayReader car = new CharArrayReader(result.toCharArray( ));
         Scanner scanner = new Scanner(car);
         String translateResult = "";
         String finalResult = "";
@@ -93,4 +90,7 @@ public class UniversalLocalizationModel {
         return finalResult;
     }
 
+    public void setNormalCommandResult (String result) {
+        this.normalCommandResult = result;
+    }
 }

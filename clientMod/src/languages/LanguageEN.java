@@ -63,7 +63,7 @@ public class LanguageEN extends ListResourceBundle {
             {"resultExecCom", "The result of the command"},
             {"Объект успешно добавлен в коллекцию!", "The object was successfully added to the collection!"},
             {"Объекты, принадлежащие вам, были успешно удалены", "Objects belonging to you have been deleted successfully"},
-            {"\nСкрипт выполнен", "\nScript executed"},
+            {"Скрипт выполнен", "Script executed"},
             {"ой, а таких элементов-то и нет :(", "oh, but there are no such elements :("},
             {"Вы еще ничего не вводили", "You haven't entered anything yet"},
             {"Время инициализации коллекции: ", "Collection initialization time: "},
@@ -106,7 +106,15 @@ public class LanguageEN extends ListResourceBundle {
             {"doneED", "Done"},
             {"Расстояние должно быть > 1", "Distance must be> 1"},
             {"Все супер", "Everything is super"},
-            {"Расстояние должно быть вещественной чиселкой", "Distance must be a real number"}
+            {"Расстояние должно быть вещественной чиселкой", "Distance must be a real number"},
+
+            {"fileName", "Enter the name of the file where the script is located"},
+            {"Ммм, скрипт пустой", "Mmm, the script is empty"},
+            {"Бе, скрипт с ошибочками, такой скрипт мы обработать не сможем", "Be, a script with errors, we won’t be able to process such a script"},
+            {"Все супер", "Everything is super"},
+            {"Недостаточно прав для чтения скрипта", "Not enough rights to read the script"},
+            {"Файла со скриптом по указанному пути не существует", "A file with a script on the specified path does not exist"},
+            {"Файл пуст!", "File is empty!"}
 
     };
 

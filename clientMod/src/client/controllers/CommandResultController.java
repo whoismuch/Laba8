@@ -26,12 +26,12 @@ public class CommandResultController {
 
     public void setResult(String result) {
         setNormalResult(result);
-        text.setText(universalLocalizationModel.translateMeAText(bundle));
+        text.setText(universalLocalizationModel.translateMeAText(bundle, result));
     }
 
     public void setNormalResult(String result) {
         this.normalResult = result;
-        universalLocalizationModel.setNormalResult(result);
+        universalLocalizationModel.setNormalCommandResult(result);
     }
 
     public TextArea getText ( ) {
@@ -49,5 +49,6 @@ public class CommandResultController {
     public void translate(ResourceBundle bundle) {
         this.bundle = bundle;
         universalLocalizationModel.changeLanguage(text.getParent(), bundle);
+        text.setText(universalLocalizationModel.translateMeAText(bundle, normalResult));
     }
 }
