@@ -72,24 +72,20 @@ public class MainWindowCollectionModel {
     }
 
     public String executeScriptCommand (String arg) throws IOException {
-        Thread thread = new Thread(new Runnable( ) {
-            @Override
-            public void run ( ) {
-                try {
-                    clientProviding.clientWork();
-                } catch (IOException e) {
-                    e.printStackTrace( );
-                }
-            }
-        });
-        thread.start();
-//        clientProviding.clientWork();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace( );
-        }
+        clientProviding.clientWork();
         clientProviding.setArg(arg);
         return clientProviding.sendCommand("execute_script").toString();
+    }
+
+    public String removeByIdCommand (String arg) throws IOException {
+        clientProviding.clientWork();
+        clientProviding.setArg(arg);
+        return clientProviding.sendCommand("remove_by_id").toString();
+    }
+
+    public String updateIdCommand (String arg) throws IOException {
+        clientProviding.clientWork();
+        clientProviding.setArg(arg);
+        return clientProviding.sendCommand("update_id").toString();
     }
 }

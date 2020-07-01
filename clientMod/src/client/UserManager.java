@@ -389,7 +389,7 @@ public class UserManager {
 
             return caw.toString( );
         } catch (NullPointerException ex) {
-            ex.printStackTrace();
+            ex.printStackTrace( );
             return "";
         }
 

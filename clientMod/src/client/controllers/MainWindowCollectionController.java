@@ -3,6 +3,7 @@ package client.controllers;
 import client.ClientApp;
 import client.FullRoute;
 import client.models.ClientProviding;
+import client.models.EnterRouteModel;
 import client.models.MainWindowCollectionModel;
 import client.models.UniversalLocalizationModel;
 import com.sun.webkit.dom.KeyboardEventImpl;
@@ -46,6 +47,7 @@ public class MainWindowCollectionController {
     private EnterScriptController enterScriptController;
     private UniversalLocalizationModel universalLocalizationModel;
     private ResourceBundle bundle;
+    private EnterRouteModel enterRouteModel;
 
     @FXML
     private Label username;
@@ -107,9 +109,56 @@ public class MainWindowCollectionController {
     @FXML
     private TextField forFilter;
 
+    @FXML
+    private TextField idField;
+
+    @FXML
+    private TextField ownerField;
+
+    @FXML
+    private TextField creationDateField;
+
+    @FXML
+    private TextField distanceField;
+
+    @FXML
+    private TextField nameField;
+
+    @FXML
+    private TextField nowXField;
+
+    @FXML
+    private TextField nowYField;
+
+    @FXML
+    private TextField fromNameField;
+
+    @FXML
+    private TextField toNameField;
+
+    @FXML
+    private TextField fromXField;
+
+    @FXML
+    private TextField fromYField;
+
+    @FXML
+    private TextField toXField;
+
+    @FXML
+    private TextField toYField;
+
+    @FXML
+    private Label editionResult;
+
+
     private String command;
 
     private GraphicsContext gc;
+
+    private Long scale;
+
+    private double gran;
 
 
     @FXML
@@ -236,11 +285,38 @@ public class MainWindowCollectionController {
                 e.printStackTrace( );
             }
         });
+
+        setEdit(false);
+
     }
 
     @FXML
     public void onActionMouseClicked (MouseEvent mouseEvent) {
-//        double finalCoordX = (coord)
+        setEdit(true);
+        editionResult.setText("");
+        double x = mouseEvent.getX( );
+        double y = mouseEvent.getY( );
+        for (Route route : clientProviding.getRoutes( )) {
+            if (Math.abs(x - (canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale)) < 15 && (((canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - y) < 50 && ((canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - y) > 0) || Math.abs((x - (canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale))) < 15 && ((canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - y < 50 && canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale - y > 0)) {
+                idField.setText(route.getId( ).toString( ));
+                ownerField.setText(route.getUsername( ));
+                creationDateField.setText(route.getCreationDate( ).toString( ));
+                distanceField.setText(route.getDistance( ).toString( ));
+                nameField.setText(route.getName( ));
+                nowXField.setText(route.getCoordinates( ).getX( ).toString( ));
+                nowYField.setText(((Integer) route.getCoordinates( ).getY( )).toString( ));
+                fromNameField.setText(route.getFrom( ).getName( ));
+                fromXField.setText(((Long) route.getFrom( ).getX( )).toString( ));
+                fromYField.setText(route.getFrom( ).getY( ).toString( ));
+                toNameField.setText(route.getTo( ).getName( ));
+                toXField.setText(((Long) route.getTo( ).getX( )).toString( ));
+                toYField.setText(route.getTo( ).getY( ).toString( ));
+                idField.setEditable(false);
+                ownerField.setEditable(false);
+                creationDateField.setEditable(false);
+            }
+        }
+
     }
 
     @FXML
@@ -466,7 +542,7 @@ public class MainWindowCollectionController {
 
     }
 
-    public String doExecScript (String arg) throws IOException{
+    public String doExecScript (String arg) throws IOException {
         return mainWindowCollectionModel.executeScriptCommand(arg);
     }
 
@@ -514,12 +590,6 @@ public class MainWindowCollectionController {
                         e.printStackTrace( );
                     }
                     enterRouteController = loader.getController( );
-                    enterRouteController.getNameField( ).getScene( ).getWindow( ).setOnCloseRequest(new EventHandler<WindowEvent>( ) {
-                        public void handle (WindowEvent we) {
-                        }
-                    });
-
-
                 });
             }
         });
@@ -674,6 +744,26 @@ public class MainWindowCollectionController {
 
     }
 
+    @FXML
+    public void onActionDelete (ActionEvent actionEvent) throws IOException {
+        String result = mainWindowCollectionModel.removeByIdCommand(idField.getText( ));
+        editionResult.setText(result);
+        if (result.equals("Элемент удален!")) {
+            clearFields( );
+            setEdit(false);
+        }
+    }
+
+    @FXML
+    public void onActionEdit (ActionEvent actionEvent) throws IOException {
+        String result = enterRouteModel.checkRoute(nameField.getText( ), nowXField.getText( ), nowYField.getText( ), fromNameField.getText( ), fromXField.getText( ), fromYField.getText( ), toNameField.getText( ), toXField.getText( ), toYField.getText( ), distanceField.getText( ));
+        String result2 = "";
+        if (result.equals("Весьма симпатичный маршрут. Так держать")) {
+            result2 = mainWindowCollectionModel.updateIdCommand(idField.getText( ));
+            editionResult.setText(result2);
+        } else editionResult.setText(result);
+    }
+
 
     public void setEverything (ClientProviding clientProviding, ClientApp clientApp, TabPane tabPane, UniversalLocalizationModel universalLocalizationModel, ResourceBundle bundle) throws IOException {
         this.clientProviding = clientProviding;
@@ -682,6 +772,8 @@ public class MainWindowCollectionController {
         this.universalLocalizationModel = universalLocalizationModel;
         this.bundle = bundle;
         mainWindowCollectionModel = new MainWindowCollectionModel(clientProviding);
+        enterRouteModel = new EnterRouteModel(clientProviding);
+
         clientProviding.getClientNotifying( ).setMainWindowCollectionController(this);
 
         setColumns(clientProviding.getRoutes( ));
@@ -705,7 +797,7 @@ public class MainWindowCollectionController {
             drawRoutes(routes);
             table.setItems(list);
         } catch (IllegalStateException ex) {
-            ex.printStackTrace();
+            ex.printStackTrace( );
         }
 
     }
@@ -714,7 +806,7 @@ public class MainWindowCollectionController {
         HashMap<String, Color> colors = getColors(routes);
         if (gc != null) gc.clearRect(0, 0, canvas.getWidth( ), canvas.getHeight( ));
 
-        Long scale = 0L;
+        scale = 0L;
         for (Route route : routes) {
             if (Math.abs(route.getFrom( ).getX( )) > scale) scale = Math.abs(route.getFrom( ).getX( ));
             if (Math.abs(route.getFrom( ).getY( )) > scale) scale = Math.abs(route.getFrom( ).getY( ));
@@ -723,7 +815,7 @@ public class MainWindowCollectionController {
         }
 
         gc = canvas.getGraphicsContext2D( );
-        double gran = 140;
+        gran = 125;
         gc.strokeLine(canvas.getWidth( ) / 2.0, 0, canvas.getWidth( ) / 2.0, canvas.getHeight( ));
         gc.strokeLine(0, canvas.getHeight( ) / 2.0, canvas.getWidth( ), canvas.getHeight( ) / 2.0);
         if (!routes.isEmpty( )) {
@@ -732,8 +824,9 @@ public class MainWindowCollectionController {
         }
         gc.fillOval(canvas.getWidth( ) / 2.0 + gran - 2.5, canvas.getHeight( ) / 2.0 - 2, 5, 5);
         gc.fillOval(canvas.getWidth( ) / 2.0 - gran + 2.5, canvas.getHeight( ) / 2.0 - 2, 5, 5);
-        gc.fillOval(canvas.getWidth( ) / 2.0 - 2.5, canvas.getHeight( ) / 2.0 + gran, 5, 5);
-        gc.fillOval(canvas.getWidth( ) / 2.0 - 2.5, canvas.getHeight( ) / 2.0 - gran, 5, 5);
+        gc.fillOval(canvas.getWidth( ) / 2.0 - 2.5, canvas.getHeight( ) / 2.0 + gran - 2, 5, 5);
+        gc.fillOval(canvas.getWidth( ) / 2.0 - 2.5, canvas.getHeight( ) / 2.0 - gran - 7, 5, 5);
+
 
 
         for (Route route : routes) {
@@ -782,6 +875,7 @@ public class MainWindowCollectionController {
                 list.add(new FullRoute(route));
             }
             table.setItems(list);
+
         } catch (IllegalStateException ex) {
             ex.printStackTrace( );
         }
@@ -789,6 +883,38 @@ public class MainWindowCollectionController {
 
     public String getCommand ( ) {
         return command;
+    }
+
+    public void clearFields ( ) {
+        idField.clear( );
+        ownerField.clear( );
+        creationDateField.clear( );
+        distanceField.clear( );
+        nameField.clear( );
+        nowXField.clear( );
+        nowYField.clear( );
+        fromNameField.clear( );
+        fromXField.clear( );
+        fromYField.clear( );
+        toNameField.clear( );
+        toXField.clear( );
+        toYField.clear( );
+    }
+
+    public void setEdit (boolean op) {
+        idField.setEditable(op);
+        ownerField.setEditable(op);
+        creationDateField.setEditable(op);
+        distanceField.setEditable(op);
+        nameField.setEditable(op);
+        nowXField.setEditable(op);
+        nowYField.setEditable(op);
+        fromNameField.setEditable(op);
+        fromXField.setEditable(op);
+        fromYField.setEditable(op);
+        toNameField.setEditable(op);
+        toXField.setEditable(op);
+        toYField.setEditable(op);
     }
 
 }
