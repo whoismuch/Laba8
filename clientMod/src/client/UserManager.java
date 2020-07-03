@@ -7,7 +7,10 @@ import javafx.util.Pair;
 
 import java.io.*;
 import java.nio.CharBuffer;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -187,7 +190,7 @@ public class UserManager {
         return route;
     }
 
-    public String checkRoute (int now, String name, String coordX, String coordY, String fromName, String fromX, String fromY, String toName, String toX, String toY, String distance) {
+    public String checkRoute (Locale locale, int now, String name, String coordX, String coordY, String fromName, String fromX, String fromY, String toName, String toX, String toY, String distance) {
         try {
             now = 1;
             String r_name = name;
@@ -209,12 +212,12 @@ public class UserManager {
             now = 9;
             Long r_toY = Long.parseLong(toY);
             now = 10;
-            Float r_distance = Float.parseFloat(distance);
+            Float r_distance = stringToFloat(locale, distance);
             if (r_distance <= 1.0) return "Дальность маршрута должна быть >1";
 
             this.route = new Route(r_name, new Coordinates(r_coordX, r_coordY), new Location(r_fromName, r_fromX, r_fromY), new Location(r_toName, r_toX, r_toY), r_distance);
 
-        } catch (NumberFormatException ex) {
+        } catch (NumberFormatException | ParseException ex) {
             switch (now) {
                 case 2:
                     return "Текущая координата X должна быть целой чиселкой :)";
@@ -229,10 +232,17 @@ public class UserManager {
                 case 9:
                     return "Координата Y места прибытия должна быть целой чиселкой :)";
                 case 10:
-                    return "Дальность маршрута должна быть чиселкой с плавающей точкой :)";
+                    return "Введите корректную дальность маршрута в соответствие с локалью, позязя :)";
             }
         }
         return "Весьма симпатичный маршрут. Так держать";
+    }
+
+    public Float stringToFloat(Locale locale, String string) throws ParseException {
+        NumberFormat usNumberFormat = NumberFormat.getInstance(locale);
+        if (string.contains(" ")) throw new NumberFormatException();
+        Float mynumber = usNumberFormat.parse(string).floatValue();
+        return mynumber;
     }
 
     public boolean checkFieldsForScript (Scanner scanner) {

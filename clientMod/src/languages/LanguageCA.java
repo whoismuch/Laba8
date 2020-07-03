@@ -97,7 +97,7 @@ public class LanguageCA extends ListResourceBundle {
             {"Координата Y места отправления должна быть целой чиселкой :)", "La coordenada Y del punt de sortida ha de ser un nombre enter :)"},
             {"Координата X места прибытия должна быть целой чиселкой :)", "La coordenada X del lloc d'arribada ha de ser un nombre enter :)"},
             {"Координата Y места прибытия должна быть целой чиселкой :)", "La coordenada Y del lloc d'arribada ha de ser un nombre enter :)"},
-            {"Дальность маршрута должна быть чиселкой с плавающей точкой :)", "La distància de la ruta ha de ser un número amb un punt flotant :)"},
+            {"Введите корректную дальность маршрута в соответствие с локалью, позязя :)", "Introduïu la distància correcta de la ruta segons la configuració local, permetent :)"},
             {"Весьма симпатичный маршрут. Так держать", "Una ruta molt maca. Continua"},
             {"Имя маршрута не может быть пустым", "El nom de la ruta no pot estar buit"},
             {"Дальность маршрута должна быть >1", "La distància de la ruta hauria de ser> 1"},

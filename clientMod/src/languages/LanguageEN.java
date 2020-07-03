@@ -97,7 +97,7 @@ public class LanguageEN extends ListResourceBundle {
             {"Координата Y места отправления должна быть целой чиселкой :)", "The Y coordinate of the departure point must be an integer :)"},
             {"Координата X места прибытия должна быть целой чиселкой :)", "The X coordinate of the place of arrival must be an integer :)"},
             {"Координата Y места прибытия должна быть целой чиселкой :)", "The Y coordinate of the place of arrival must be an integer :)"},
-            {"Дальность маршрута должна быть чиселкой с плавающей точкой :)", "The distance of the route should be a number with a floating point :)"},
+            {"Введите корректную дальность маршрута в соответствие с локалью, позязя :)", "Enter the correct distance of the route according to the locale, allowing :)"},
             {"Весьма симпатичный маршрут. Так держать", "A very nice route. Keep it up"},
             {"Имя маршрута не может быть пустым", "Route name cannot be empty"},
             {"Дальность маршрута должна быть >1", "The distance of the route should be> 1"},

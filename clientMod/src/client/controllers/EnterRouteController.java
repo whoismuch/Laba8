@@ -74,7 +74,7 @@ public class EnterRouteController {
 
     public void onActionDone (ActionEvent actionEvent) throws IOException, InterruptedException {
         validationResult.setWrapText(true);
-        result = enterRouteModel.checkRoute (nameField.getText(), coordinateXField.getText(), coordinateYField.getText(), fromNameField.getText(), fromXField.getText(), fromYField.getText(), toNameField.getText(), toXField.getText(), toYField.getText(), distanceField.getText());
+        result = enterRouteModel.checkRoute (mainWindowCollectionController.getLocale(), nameField.getText(), coordinateXField.getText(), coordinateYField.getText(), fromNameField.getText(), fromXField.getText(), fromYField.getText(), toNameField.getText(), toXField.getText(), toYField.getText(), distanceField.getText());
 //        universalLocalizationModel.setNormalResult(result);
 
         validationResult.setText(bundle.getString(result));

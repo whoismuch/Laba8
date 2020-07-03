@@ -10,6 +10,8 @@ import javafx.scene.canvas.GraphicsContext;
 import java.awt.*;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.List;
@@ -95,10 +97,10 @@ public class MainWindowCollectionModel {
         return clientProviding.sendCommand("update_id").toString();
     }
 
-    public Route convertRoute(FullRoute fullRoute) {
-        Route route = new Route(fullRoute.getName(), fullRoute.getId(), new Coordinates(fullRoute.getCoordinateX(), fullRoute.getCoordinateY()), fullRoute.getCreationDate(), new Location(fullRoute.getFromName(), fullRoute.getFromX(), fullRoute.getFromY()), new Location(fullRoute.getToName(), fullRoute.getToX(), fullRoute.getToY()), fullRoute.getDistance());
-        return route;
-    }
+//    public Route convertRoute(FullRoute fullRoute) {
+//        Route route = new Route(fullRoute.getName(), fullRoute.getId(), new Coordinates(fullRoute.getCoordinateX(), fullRoute.getCoordinateY()), fullRoute.getCreationDate(), new Location(fullRoute.getFromName(), fullRoute.getFromX(), fullRoute.getFromY()), new Location(fullRoute.getToName(), fullRoute.getToX(), fullRoute.getToY()), fullRoute.getDistance());
+//        return route;
+//    }
 
     public String localizeDate(Locale locale, ZonedDateTime creationDate) {
         Date date1 = Date.from(creationDate.toInstant());
@@ -107,5 +109,20 @@ public class MainWindowCollectionModel {
 
         return  ffInstance.format(date1);
     }
+
+    public String localizeDistance(Locale locale, Float distance) {
+
+        NumberFormat usNumberFormat = NumberFormat.getInstance(locale);
+
+        return  usNumberFormat.format(distance);
+    }
+
+    public Float stringToFloat(Locale locale, String string) throws ParseException {
+        NumberFormat usNumberFormat = NumberFormat.getInstance(locale);
+        Float mynumber = usNumberFormat.parse(string).floatValue();
+        return mynumber;
+    }
+
+
 
 }

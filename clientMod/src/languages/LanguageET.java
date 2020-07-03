@@ -98,7 +98,7 @@ public class LanguageET extends ListResourceBundle {
             {"Координата Y места отправления должна быть целой чиселкой :)", "Lähtepunkti Y-koordinaat peab olema täisarv :)"},
             {"Координата X места прибытия должна быть целой чиселкой :)", "Saabumiskoha X-koordinaat peab olema täisarv :)"},
             {"Координата Y места прибытия должна быть целой чиселкой :)", "Saabumiskoha Y-koordinaat peab olema täisarv :)"},
-            {"Дальность маршрута должна быть чиселкой с плавающей точкой :)", "Marsruudi vahemaa peaks olema ujuva punktiga arv :)"},
+            {"Введите корректную дальность маршрута в соответствие с локалью, позязя :)", "Sisestage marsruudi õige kaugus vastavalt lokaadile, lubades :)"},
             {"Весьма симпатичный маршрут. Так держать", "Väga kena marsruut. Hoia üles"},
             {"Имя маршрута не может быть пустым", "Marsruudi nimi ei saa olla tühi"},
             {"Дальность маршрута должна быть >1", "Marsruudi vahemaa peaks olema> 1"},

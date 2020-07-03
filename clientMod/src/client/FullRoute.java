@@ -5,6 +5,7 @@ import common.generatedClasses.Location;
 import common.generatedClasses.Route;
 
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -53,11 +54,13 @@ public class FullRoute {
     /**
      * Поле длина маршрута(расстояние)
      */
-    private Float distance; //Поле не может быть null, Значение поля должно быть больше 1
+    private Float distanc; //Поле не может быть null, Значение поля должно быть больше 1
 
     private String username;
 
     private String date;
+
+    private String distance;
 
     public void setDate (String date) {
         this.date = date;
@@ -87,7 +90,11 @@ public class FullRoute {
         toName = route.getTo( ).getName( );
         toX = route.getTo( ).getX( );
         toY = route.getTo( ).getY( );
-        distance = route.getDistance( );
+        distanc = route.getDistance( );
+
+        NumberFormat usNumberFormat = NumberFormat.getInstance(locale);
+
+        distance = usNumberFormat.format(distanc);
     }
 
     public String getName ( ) {
@@ -178,11 +185,19 @@ public class FullRoute {
         this.toY = toY;
     }
 
-    public Float getDistance ( ) {
+    public void setDistanc (Float distanc) {
+        this.distanc = distanc;
+    }
+
+    public Float getDistanc ( ) {
+        return distanc;
+    }
+
+    public String getDistance ( ) {
         return distance;
     }
 
-    public void setDistance (Float distance) {
+    public void setDistance (String distance) {
         this.distance = distance;
     }
 
