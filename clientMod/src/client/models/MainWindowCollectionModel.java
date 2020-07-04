@@ -24,77 +24,77 @@ public class MainWindowCollectionModel {
         this.clientProviding = clientProviding;
     }
 
-    public LinkedHashSet<Route> giveMeMyCollection () throws IOException {
+    public LinkedHashSet<Route> giveMeMyCollection ( ) throws IOException {
         return clientProviding.getRoutes( );
     }
 
-    public String infoCommand() throws IOException {
-        clientProviding.clientWork();
-        return clientProviding.sendCommand("info").toString();
+    public String infoCommand ( ) throws IOException {
+        clientProviding.clientWork( );
+        return clientProviding.sendCommand("info").toString( );
     }
 
-    public String sumOfDistanceCommand () throws IOException {
-        clientProviding.clientWork();
-        return clientProviding.sendCommand("sum_of_distance").toString();
+    public String sumOfDistanceCommand ( ) throws IOException {
+        clientProviding.clientWork( );
+        return clientProviding.sendCommand("sum_of_distance").toString( );
     }
 
     public String historyCommand ( ) throws IOException {
-        clientProviding.clientWork();
-        return clientProviding.sendCommand("history").toString();
+        clientProviding.clientWork( );
+        return clientProviding.sendCommand("history").toString( );
     }
 
     public String clearCommand ( ) throws IOException {
-        clientProviding.clientWork();
-        return clientProviding.sendCommand("clear").toString();
+        clientProviding.clientWork( );
+        return clientProviding.sendCommand("clear").toString( );
     }
 
-    public void addCommand () throws IOException {
-        clientProviding.clientWork();
+    public void addCommand ( ) throws IOException {
+        clientProviding.clientWork( );
         clientProviding.sendCommand("add");
     }
 
-    public List<Route>  printAscendingCommand() throws IOException {
-        clientProviding.clientWork();
+    public List<Route> printAscendingCommand ( ) throws IOException {
+        clientProviding.clientWork( );
         Object o = clientProviding.sendCommand("print_ascending");
-        if (o.getClass().equals("".getClass())) return null;
+        if (o.getClass( ).equals("".getClass( ))) return null;
         else return (List<Route>) o;
     }
 
-    public List<Route> filterLessThanDistance(String dist) throws IOException {
-        clientProviding.clientWork();
+    public List<Route> filterLessThanDistance (String dist) throws IOException {
+        clientProviding.clientWork( );
         clientProviding.setArg(dist);
         Object o = clientProviding.sendCommand("filter_less_than_distance");
-        List<Route> list = new ArrayList<>();
-        if (o.getClass().equals("".getClass())) return list;
+        List<Route> list = new ArrayList<>( );
+        if (o.getClass( ).equals("".getClass( ))) return list;
         else return (List<Route>) o;
     }
 
-    public void removeLowerCommand() throws IOException {
-        clientProviding.clientWork();
+    public void removeLowerCommand ( ) throws IOException {
+        clientProviding.clientWork( );
         clientProviding.sendCommand("remove_lower");
     }
 
-    public void removeGreaterCommand() throws IOException {
-        clientProviding.clientWork();
+    public void removeGreaterCommand ( ) throws IOException {
+        clientProviding.clientWork( );
         clientProviding.sendCommand("remove_greater");
     }
 
     public String executeScriptCommand (String arg) throws IOException {
-        clientProviding.clientWork();
+        clientProviding.clientWork( );
         clientProviding.setArg(arg);
-        return clientProviding.sendCommand("execute_script").toString();
+        return clientProviding.sendCommand("execute_script").toString( );
     }
 
     public String removeByIdCommand (String arg) throws IOException {
-        clientProviding.clientWork();
+        clientProviding.clientWork( );
         clientProviding.setArg(arg);
-        return clientProviding.sendCommand("remove_by_id").toString();
+        return clientProviding.sendCommand("remove_by_id").toString( );
     }
 
     public String updateIdCommand (String arg) throws IOException {
-        clientProviding.clientWork();
+        clientProviding.clientWork( );
         clientProviding.setArg(arg);
-        return clientProviding.sendCommand("update_id").toString();
+        return clientProviding.sendCommand("update_id").toString( );
     }
 
 //    public Route convertRoute(FullRoute fullRoute) {
@@ -102,27 +102,38 @@ public class MainWindowCollectionModel {
 //        return route;
 //    }
 
-    public String localizeDate(Locale locale, ZonedDateTime creationDate) {
-        Date date1 = Date.from(creationDate.toInstant());
+    public String localizeDate (Locale locale, ZonedDateTime creationDate) {
+        Date date1 = Date.from(creationDate.toInstant( ));
         DateFormat ffInstance = DateFormat.getDateTimeInstance(
                 DateFormat.FULL, DateFormat.MEDIUM, locale);
 
-        return  ffInstance.format(date1);
+        return ffInstance.format(date1);
     }
 
-    public String localizeDistance(Locale locale, Float distance) {
+    public String localizeDistance (Locale locale, Float distance) {
 
         NumberFormat usNumberFormat = NumberFormat.getInstance(locale);
 
-        return  usNumberFormat.format(distance);
+        return usNumberFormat.format(distance);
     }
 
-    public Float stringToFloat(Locale locale, String string) throws ParseException {
+    public Float stringToFloat (Locale locale, String string) throws ParseException {
         NumberFormat usNumberFormat = NumberFormat.getInstance(locale);
-        Float mynumber = usNumberFormat.parse(string).floatValue();
+        Float mynumber = usNumberFormat.parse(string).floatValue( );
         return mynumber;
     }
 
+    public boolean isEquals (LinkedHashSet<Route> routes1, LinkedHashSet<Route> routes2) {
+        int i = 0;
+        if (routes1.size( ) != routes2.size( )) return false;
+        for (Route route : routes1) {
+            for (Route route1 : routes2) {
+                if (route.getId().equals(route1.getId()) && route.getFrom( ).equals(route1.getFrom( )) && route.getTo( ).equals(route1.getTo( ))) i++;
+            }
+        }
+        if (i == routes1.size( )) return true;
+        else return false;
+    }
 
 
 }

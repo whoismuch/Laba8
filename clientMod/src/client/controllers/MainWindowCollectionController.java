@@ -15,6 +15,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -24,6 +25,8 @@ import javafx.event.ActionEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -162,7 +165,7 @@ public class MainWindowCollectionController {
 
     private HashMap<Long, Group> pictureFrom;
     private HashMap<Long, Group> pictureTo;
-    private int i = 0;
+    private volatile int i = 0;
     private Timeline timeline;
     private boolean finish = true;
     private double a;
@@ -174,6 +177,16 @@ public class MainWindowCollectionController {
     private String kostil;
     private String tableEdResult;
     private Locale locale;
+    private volatile boolean help = false;
+    private int p;
+    private double xFrNow;
+    private double yFrNow;
+    private volatile HashMap<Long, Double> mapforXFrNow;
+    private volatile HashMap<Long, Double> mapforYFrNow;
+    private HashMap<Long, AnimationMove> animationHashMap;
+    private HashMap<Long, Boolean> isAnimRunMap;
+    private HashMap<Long, Double> mapforXFr;
+    private HashMap<Long, Double> mapforYfr;
 
 
     @FXML
@@ -365,7 +378,7 @@ public class MainWindowCollectionController {
     public void onActionMouseClicked (MouseEvent mouseEvent) {
         editionResult.setText("");
         edResult = "";
-        clearFields();
+        clearFields( );
         setEdit(true);
         double x = mouseEvent.getX( );
         double y = mouseEvent.getY( );
@@ -373,8 +386,8 @@ public class MainWindowCollectionController {
             if (Math.abs(x - (canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale)) < 15 && (((canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - y) < 50 && ((canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - y) > 0) || Math.abs((x - (canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale))) < 15 && ((canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - y < 50 && canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale - y > 0)) {
                 idField.setText(route.getId( ).toString( ));
                 ownerField.setText(route.getUsername( ));
-                creationDateField.setText(mainWindowCollectionModel.localizeDate(locale, route.getCreationDate()));
-                distanceField.setText(mainWindowCollectionModel.localizeDistance(locale, route.getDistance()));
+                creationDateField.setText(mainWindowCollectionModel.localizeDate(locale, route.getCreationDate( )));
+                distanceField.setText(mainWindowCollectionModel.localizeDistance(locale, route.getDistance( )));
                 nameField.setText(route.getName( ));
                 nowXField.setText(route.getCoordinates( ).getX( ).toString( ));
                 nowYField.setText(((Integer) route.getCoordinates( ).getY( )).toString( ));
@@ -957,16 +970,26 @@ public class MainWindowCollectionController {
         mainWindowCollectionModel = new MainWindowCollectionModel(clientProviding);
         enterRouteModel = new EnterRouteModel(clientProviding);
 
+        mapforYFrNow = new HashMap<>( );
+        mapforXFrNow = new HashMap<>( );
+        animationHashMap = new HashMap<>( );
+        isAnimRunMap = new HashMap<>( );
+        mapforXFr = new HashMap<>( );
+        mapforYfr = new HashMap<>( );
+
         clientProviding.getClientNotifying( ).setMainWindowCollectionController(this);
 
         this.locale = locale;
         routess = clientProviding.getRoutes( );
 
-//        setColumns(clientProviding.getRoutes( ));
+
+        drawRoutes(clientProviding.getRoutes( ));
         clientProviding.clientWork( );
 
         username.setText(clientProviding.getUsername( ));
         username1.setText(clientProviding.getUsername( ));
+
+        AnimationMove.setMainWindowCollectionController(this);
 
         Platform.runLater(( ) -> {
             universalLocalizationModel.changeLanguage(user.getParent( ).getParent( ).getParent( ).getParent( ), bundle);
@@ -981,24 +1004,23 @@ public class MainWindowCollectionController {
                 list.add(new FullRoute(route, locale));
             }
 
-//            System.out.println("routess" );
-//            System.out.println(routess );
-//            System.out.println("new routess" );
-//            System.out.println(clientProviding.getRoutes());
-//            for (int i )
 
-            drawRoutes(routes);
+            if (!mainWindowCollectionModel.isEquals(routess, clientProviding.getRoutes( ))) {
+//                System.out.println("antosha");
+                drawRoutes(routes);
+                routess = clientProviding.getRoutes( );
+            }
+
             table.setItems(list);
-            routess = clientProviding.getRoutes( );
 
             clearFields( );
-        } catch (IllegalStateException | InterruptedException ex) {
+        } catch (IllegalStateException ex) {
             ex.printStackTrace( );
         }
 
     }
 
-    public void drawRoutes (LinkedHashSet<Route> routes) throws InterruptedException {
+    public void drawRoutes (LinkedHashSet<Route> routes) {
 
         HashMap<String, Color> colors = getColors(routes);
         if (gc != null) gc.clearRect(0, 0, canvas.getWidth( ), canvas.getHeight( ));
@@ -1025,11 +1047,13 @@ public class MainWindowCollectionController {
         gc.fillOval(canvas.getWidth( ) / 2.0 - 2.5, canvas.getHeight( ) / 2.0 - gran - 7, 5, 5);
 
         Group group = (Group) canvas.getParent( );
-        Group fromGroup = new Group( );
 
-        Group toGroup = new Group( );
 
         for (Route route : routes) {
+
+            Group fromGroup = new Group( );
+
+            Group toGroup = new Group( );
 
             gc.beginPath( );
             gc.moveTo((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale));
@@ -1039,107 +1063,128 @@ public class MainWindowCollectionController {
             gc.closePath( );
             gc.setStroke(Color.BLACK);
 
-            gc.setFill(colors.get(route.getUsername( )));
-            gc.fillOval((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale) - 15, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 50, 30, 30);
-            gc.fillPolygon(new double[]{canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale - 15, canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale, canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale + 15}, new double[]{(canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 32, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 32}, 3);
-            gc.setFill(javafx.scene.paint.Color.WHITE);
-            gc.fillOval(canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale - 10, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 45, 20, 20);
-            gc.setFill(Color.BLACK);
+            Circle circle = new Circle((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 35, 15);
+            circle.setFill(colors.get(route.getUsername( )));
+            Polygon polygon = new Polygon( );
+            polygon.getPoints( ).addAll(new Double[]{
+                    canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale - 15, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 32,
+                    canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale),
+                    canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale + 15, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 32});
+            polygon.setFill(colors.get(route.getUsername( )));
+            Circle smallCircle = new Circle((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 35, 10);
+            smallCircle.setFill(Color.WHITE);
 
-            gc.setFill(colors.get(route.getUsername( )));
-            gc.fillOval((canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale) - 15, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 50, 30, 30);
-            gc.fillPolygon(new double[]{canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale - 15, canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale, canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale + 15}, new double[]{(canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 32, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale), (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 32}, 3);
-            gc.setFill(javafx.scene.paint.Color.WHITE);
-            gc.fillOval(canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale - 10, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 45, 20, 20);
-            gc.setFill(Color.BLACK);
 
-//            if (!pictureFrom.containsKey(route.getId( ))) {
-//                if (!group.getChildren( ).contains(fromGroup)) group.getChildren( ).add(fromGroup);
-//                if (!group.getChildren( ).contains(toGroup)) group.getChildren( ).add(toGroup);
-//            }
-//
-//            gc.beginPath( );
-//            gc.moveTo((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale));
-//            gc.quadraticCurveTo((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), ((canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) + (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale)) / 2.0 - gran / 6, canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale));
-//            gc.setStroke(colors.get(route.getUsername( )));
-//            gc.stroke( );
-//            gc.closePath( );
-//            gc.setStroke(Color.BLACK);
-//
-//            Circle circle = new Circle((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 35, 15);
-//            circle.setFill(colors.get(route.getUsername( )));
-//            Polygon polygon = new Polygon( );
-//            polygon.getPoints( ).addAll(new Double[]{
-//                    canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale - 15, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 32,
-//                    canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale),
-//                    canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale + 15, (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 32});
-//            polygon.setFill(colors.get(route.getUsername( )));
-//            Circle smallCircle = new Circle((canvas.getWidth( ) / 2.0 + (route.getFrom( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getFrom( ).getY( )) * gran / scale) - 35, 10);
-//            smallCircle.setFill(Color.WHITE);
-//
-//            fromGroup.getChildren( ).add(polygon);
-//            fromGroup.getChildren( ).add(circle);
-//            fromGroup.getChildren( ).add(smallCircle);
-//
-//            double xFrNow = 0;
-//            double yFrNow = 0;
-//            for (Node node : fromGroup.getChildren( )) {
-//                if (node instanceof Circle) {
-//                    xFrNow = ((Circle) node).getCenterX( );
-//                    yFrNow = ((Circle) node).getCenterY( ) + 35;
-//                }
-//            }
-//
-//            Circle circle2 = new Circle((canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 35, 15);
-//            circle2.setFill(colors.get(route.getUsername( )));
-//            Polygon polygon2 = new Polygon( );
-//            polygon2.getPoints( ).addAll(new Double[]{
-//                    canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale - 15, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 32,
-//                    canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale),
-//                    canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale + 15, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 32});
-//            polygon2.setFill(colors.get(route.getUsername( )));
-//            Circle smallCircle2 = new Circle((canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 35, 10);
-//            smallCircle2.setFill(Color.WHITE);
-//
-//
-//            toGroup.getChildren( ).add(polygon2);
-//            toGroup.getChildren( ).add(circle2);
-//            toGroup.getChildren( ).add(smallCircle2);
-//
-//
-//            if (pictureFrom.containsKey(route.getId( ))) {
-//
-//                double xFr = 0;
-//                double yFr = 0;
-//
-//                Group groupFr = pictureFrom.get(route.getId( ));
-//                for (Node node : groupFr.getChildren( )) {
-//                    if (node instanceof Circle) {
-//                        xFr = ((Circle) node).getCenterX( );
-//                        yFr = ((Circle) node).getCenterY( ) + 35;
-//                    }
-//                }
-//
-//                a = xFr - xFrNow;
-//                b = yFr - yFrNow;
-//
-//
-//                System.out.println(a + " " + b );
-//
-//               AnimationMove animationMove = new AnimationMove(pictureFrom.get(route.getId( )), a, b, xFr, yFr);
-//               animationMove.playAnim( );
-//
-//                if (a!=0 || b!=0){
-//                }
-//
-//                pictureFrom.replace(route.getId( ), fromGroup);
-//            } else {
-//                pictureFrom.put(route.getId( ), fromGroup);
-//            }
-//
-//
-//        }
+            Circle circle2 = new Circle((canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 35, 15);
+            circle2.setFill(colors.get(route.getUsername( )));
+            Polygon polygon2 = new Polygon( );
+            polygon2.getPoints( ).addAll(new Double[]{
+                    canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale - 15, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 32,
+                    canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale),
+                    canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale + 15, (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 32});
+            polygon2.setFill(colors.get(route.getUsername( )));
+            Circle smallCircle2 = new Circle((canvas.getWidth( ) / 2.0 + (route.getTo( ).getX( )) * (gran) / scale), (canvas.getHeight( ) / 2.0 - (route.getTo( ).getY( )) * gran / scale) - 35, 10);
+            smallCircle2.setFill(Color.WHITE);
+
+
+            Platform.runLater(( ) -> {
+
+                toGroup.getChildren( ).add(polygon2);
+                toGroup.getChildren( ).add(circle2);
+                toGroup.getChildren( ).add(smallCircle2);
+
+                fromGroup.getChildren( ).add(polygon);
+                fromGroup.getChildren( ).add(circle);
+                fromGroup.getChildren( ).add(smallCircle);
+
+                getShrekXfrNowYfrNow(route.getId( ), fromGroup);
+                getShrekXFrYFr(route.getId(), fromGroup);
+
+                if (!pictureFrom.containsKey(route.getId( ))) {
+                    if (!group.getChildren( ).contains(fromGroup)) group.getChildren( ).add(fromGroup);
+                }
+
+                if (!group.getChildren( ).contains(toGroup)) group.getChildren( ).add(toGroup);
+
+            });
+
+
+            if (pictureFrom.containsKey(route.getId( ))) {
+
+                while (isAnimRunMap.get(route.getId( ))) ;
+
+                isAnimRunMap.replace(route.getId( ), true);
+
+
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace( );
+                }
+                gc.setFill(Color.GREEN);
+                gc.fillOval(xFrNow, yFrNow + 30, 5, 5);
+                gc.setFill(Color.BLACK);
+
+                animationHashMap.get(route.getId( )).setEverything(pictureFrom.get(route.getId( )), mapforXFrNow.get(route.getId( )), mapforYFrNow.get(route.getId( )) + 1, mapforXFr.get(route.getId( )), mapforYfr.get(route.getId( )));
+                animationHashMap.get(route.getId( )).playAnim( );
+
+                mapforXFr.replace(route.getId( ), mapforXFrNow.get(route.getId( )));
+                mapforYfr.replace(route.getId( ), mapforYFrNow.get(route.getId( )));
+
+            } else {
+                if (!group.getChildren( ).contains(fromGroup)) group.getChildren( ).add(fromGroup);
+                pictureFrom.put(route.getId( ), fromGroup);
+                animationHashMap.put(route.getId( ), new AnimationMove(route.getId( )));
+                isAnimRunMap.put(route.getId( ), false);
+            }
+
+
         }
+
+    }
+
+    private void getShrekXFrYFr (Long id, Group fromGroup) {
+        if (!mapforXFr.containsKey(id)) {
+            double xFr = 0;
+            double yFr = 0;
+
+            for (Node node : fromGroup.getChildren( )) {
+                if (node instanceof Circle) {
+                    xFr = ((Circle) node).getCenterX( );
+                    yFr = ((Circle) node).getCenterY( ) + 10;
+                }
+            }
+
+            mapforXFr.put(id, xFr);
+            mapforYfr.put(id, yFr);
+
+            gc.setFill(Color.PINK);
+            gc.fillOval(mapforXFr.put(id, xFr), mapforYfr.put(id, yFr) + 30, 5, 5);
+            gc.setFill(Color.BLACK);
+        }
+
+    }
+
+    public void getShrekXfrNowYfrNow (Long id, Group group) {
+
+
+        for (Node node : group.getChildren( )) {
+            if (node instanceof Circle) {
+                xFrNow = ((Circle) node).getCenterX( );
+                yFrNow = ((Circle) node).getCenterY( ) + 10;
+            }
+        }
+
+        mapforXFrNow.put(id, xFrNow);
+        mapforYFrNow.put(id, yFrNow);
+
+        gc.setFill(Color.BLUE);
+        gc.fillOval(xFrNow, yFrNow + 60, 5, 5);
+        gc.setFill(Color.BLACK);
+    }
+
+    public void pleaseWork (Long id) {
+        isAnimRunMap.put(id, false);
     }
 
 
@@ -1214,7 +1259,7 @@ public class MainWindowCollectionController {
     public void doEdit ( ) throws IOException {
         FullRoute fullRoute = ((FullRoute) table.getSelectionModel( ).getSelectedItem( ));
         if (kostil.equals("name")) {
-            String result = clientProviding.getUserManager( ).checkRoute(locale,0, enterEverythingController.getText( ), fullRoute.getCoordinateX( ).toString( ), ((Integer) fullRoute.getCoordinateY( )).toString( ), fullRoute.getFromName( ), ((Long) fullRoute.getFromX( )).toString( ), fullRoute.getFromY( ).toString( ), fullRoute.getToName( ), ((Long) fullRoute.getToX( )).toString( ), fullRoute.getToY( ).toString( ), fullRoute.getDistance( ).toString( ));
+            String result = clientProviding.getUserManager( ).checkRoute(locale, 0, enterEverythingController.getText( ), fullRoute.getCoordinateX( ).toString( ), ((Integer) fullRoute.getCoordinateY( )).toString( ), fullRoute.getFromName( ), ((Long) fullRoute.getFromX( )).toString( ), fullRoute.getFromY( ).toString( ), fullRoute.getToName( ), ((Long) fullRoute.getToX( )).toString( ), fullRoute.getToY( ).toString( ), fullRoute.getDistance( ).toString( ));
             if (result.equals("Весьма симпатичный маршрут. Так держать")) {
                 tableEdResult = mainWindowCollectionModel.updateIdCommand(fullRoute.getId( ).toString( ));
                 tableEditionResult.setText(bundle.getString(tableEdResult));
@@ -1225,7 +1270,7 @@ public class MainWindowCollectionController {
         }
 
         if (kostil.equals("coordinateX")) {
-            String result = clientProviding.getUserManager( ).checkRoute(locale , 0, fullRoute.getName( ), enterEverythingController.getText( ), ((Integer) fullRoute.getCoordinateY( )).toString( ), fullRoute.getFromName( ), ((Long) fullRoute.getFromX( )).toString( ), fullRoute.getFromY( ).toString( ), fullRoute.getToName( ), ((Long) fullRoute.getToX( )).toString( ), fullRoute.getToY( ).toString( ), fullRoute.getDistance( ).toString( ));
+            String result = clientProviding.getUserManager( ).checkRoute(locale, 0, fullRoute.getName( ), enterEverythingController.getText( ), ((Integer) fullRoute.getCoordinateY( )).toString( ), fullRoute.getFromName( ), ((Long) fullRoute.getFromX( )).toString( ), fullRoute.getFromY( ).toString( ), fullRoute.getToName( ), ((Long) fullRoute.getToX( )).toString( ), fullRoute.getToY( ).toString( ), fullRoute.getDistance( ).toString( ));
             if (result.equals("Весьма симпатичный маршрут. Так держать")) {
                 tableEdResult = mainWindowCollectionModel.updateIdCommand(fullRoute.getId( ).toString( ));
                 tableEditionResult.setText(bundle.getString(tableEdResult));

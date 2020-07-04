@@ -46,13 +46,17 @@ public class ClientNotifying implements Runnable {
                 Object object = dataExchangeWithServer.getFromServer( );
                 LinkedHashSet<Route> routes = (LinkedHashSet<Route>) object;
                 clientProviding.setRoutes(routes);
-                if (mainWindowCollectionController!= null) mainWindowCollectionController.setColumns(routes);
+                if (mainWindowCollectionController != null) {
+                    mainWindowCollectionController.setColumns(routes);
+                }
             }
         } catch (ClosedChannelException ex) {
-            ex.printStackTrace();
+            ex.printStackTrace( );
         } catch (IOException ex) {
             ex.printStackTrace( );
         } catch (ClassCastException ex) {
+        } catch (IllegalStateException ex) {
+
         }
     }
 }
