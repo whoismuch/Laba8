@@ -179,14 +179,21 @@ public class MainWindowCollectionController {
     private Locale locale;
     private volatile boolean help = false;
     private int p;
-    private double xFrNow;
-    private double yFrNow;
     private volatile HashMap<Long, Double> mapforXFrNow;
     private volatile HashMap<Long, Double> mapforYFrNow;
-    private HashMap<Long, AnimationMove> animationHashMap;
-    private HashMap<Long, Boolean> isAnimRunMap;
+    private volatile HashMap<Long, Double> mapforXToNow;
+    private volatile HashMap<Long, Double> mapforYToNow;
+    private HashMap<Long, AnimationMove> animationFrHashMap;
+    private HashMap<Long, AnimationMove> animationToHashMap;
+    private HashMap<Long, Boolean> isAnimRunMapFr;
+    private HashMap<Long, Boolean> isAnimRunMapTo;
     private HashMap<Long, Double> mapforXFr;
     private HashMap<Long, Double> mapforYfr;
+    private HashMap<Long, Double> mapforXTo;
+    private HashMap<Long, Double> mapforYTo;
+    private HashMap<Long, Route> r;
+
+
 
 
     @FXML
@@ -972,10 +979,18 @@ public class MainWindowCollectionController {
 
         mapforYFrNow = new HashMap<>( );
         mapforXFrNow = new HashMap<>( );
-        animationHashMap = new HashMap<>( );
-        isAnimRunMap = new HashMap<>( );
+        mapforXToNow = new HashMap<>();
+        mapforYToNow = new HashMap<>();
+        animationFrHashMap = new HashMap<>( );
+        animationToHashMap = new HashMap<>();
+        isAnimRunMapFr = new HashMap<>( );
+        isAnimRunMapTo = new HashMap<>();
+        r = new HashMap<>();
+
         mapforXFr = new HashMap<>( );
         mapforYfr = new HashMap<>( );
+        mapforXTo = new HashMap<>();
+        mapforYTo = new HashMap<>();
 
         clientProviding.getClientNotifying( ).setMainWindowCollectionController(this);
 
@@ -1051,6 +1066,7 @@ public class MainWindowCollectionController {
 
         for (Route route : routes) {
 
+
             Group fromGroup = new Group( );
 
             Group toGroup = new Group( );
@@ -1098,49 +1114,153 @@ public class MainWindowCollectionController {
                 fromGroup.getChildren( ).add(smallCircle);
 
                 getShrekXfrNowYfrNow(route.getId( ), fromGroup);
-                getShrekXFrYFr(route.getId(), fromGroup);
+                getShrekXFrYFr(route.getId( ), fromGroup);
+                getFionaXtoNowYtoNow(route.getId( ), toGroup);
+                getFionaXToYTo(route.getId( ), toGroup);
 
                 if (!pictureFrom.containsKey(route.getId( ))) {
                     if (!group.getChildren( ).contains(fromGroup)) group.getChildren( ).add(fromGroup);
+                    pictureFrom.put(route.getId( ), fromGroup);
+                    animationFrHashMap.put(route.getId( ), new AnimationMove(route.getId( )));
+                    isAnimRunMapFr.put(route.getId( ), false);
                 }
 
-                if (!group.getChildren( ).contains(toGroup)) group.getChildren( ).add(toGroup);
+                if (!pictureTo.containsKey(route.getId( ))) {
+                    if (!group.getChildren( ).contains(toGroup)) group.getChildren( ).add(toGroup);
+                    pictureTo.put(route.getId( ), toGroup);
+                    animationToHashMap.put(route.getId( ), new AnimationMove(route.getId( )));
+                    isAnimRunMapTo.put(route.getId( ), false);
+                }
+
 
             });
 
+            if (r.containsKey(route.getId())) {
 
-            if (pictureFrom.containsKey(route.getId( ))) {
-
-                while (isAnimRunMap.get(route.getId( ))) ;
-
-                isAnimRunMap.replace(route.getId( ), true);
+                if (!route.getFrom( ).equals(r.get(route.getId( )).getFrom( ))) {
 
 
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace( );
+                    if (pictureFrom.containsKey(route.getId( ))) {
+
+
+                        while (isAnimRunMapFr.get(route.getId( ))) ;
+
+
+                        isAnimRunMapFr.replace(route.getId( ), true);
+
+
+
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace( );
+                        }
+
+//                gc.setFill(Color.GREEN);
+//                gc.fillOval(xFrNow, yFrNow + 30, 5, 5);
+//                gc.setFill(Color.BLACK);
+
+                        animationFrHashMap.get(route.getId( )).setEverything(pictureFrom.get(route.getId( )), mapforXFrNow.get(route.getId( )), mapforYFrNow.get(route.getId( )) + 1, mapforXFr.get(route.getId( )), mapforYfr.get(route.getId( )));
+                        animationFrHashMap.get(route.getId( )).playAnim( );
+
+                        mapforXFr.replace(route.getId( ), mapforXFrNow.get(route.getId( )));
+                        mapforYfr.replace(route.getId( ), mapforYFrNow.get(route.getId( )));
+
+                    } else {
+//                        if (!group.getChildren( ).contains(fromGroup)) group.getChildren( ).add(fromGroup);
+                        pictureFrom.put(route.getId( ), fromGroup);
+                        animationFrHashMap.put(route.getId( ), new AnimationMove(route.getId( )));
+                        isAnimRunMapFr.put(route.getId( ), false);
+                    }
+
+                    r.replace(route.getId(), route);
+
                 }
-                gc.setFill(Color.GREEN);
-                gc.fillOval(xFrNow, yFrNow + 30, 5, 5);
-                gc.setFill(Color.BLACK);
 
-                animationHashMap.get(route.getId( )).setEverything(pictureFrom.get(route.getId( )), mapforXFrNow.get(route.getId( )), mapforYFrNow.get(route.getId( )) + 1, mapforXFr.get(route.getId( )), mapforYfr.get(route.getId( )));
-                animationHashMap.get(route.getId( )).playAnim( );
+                if (!route.getTo( ).equals(r.get(route.getId( )).getTo( ))) {
 
-                mapforXFr.replace(route.getId( ), mapforXFrNow.get(route.getId( )));
-                mapforYfr.replace(route.getId( ), mapforYFrNow.get(route.getId( )));
+                    if (pictureTo.containsKey(route.getId( ))) {
 
-            } else {
-                if (!group.getChildren( ).contains(fromGroup)) group.getChildren( ).add(fromGroup);
-                pictureFrom.put(route.getId( ), fromGroup);
-                animationHashMap.put(route.getId( ), new AnimationMove(route.getId( )));
-                isAnimRunMap.put(route.getId( ), false);
+                        while (isAnimRunMapTo.get(route.getId( ))) ;
+
+                        isAnimRunMapTo.replace(route.getId( ), true);
+
+
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace( );
+                        }
+//                gc.setFill(Color.GREEN);
+//                gc.fillOval(xFrNow, yFrNow + 30, 5, 5);
+//                gc.setFill(Color.BLACK);
+
+                        animationToHashMap.get(route.getId( )).setEverything(pictureTo.get(route.getId( )), mapforXToNow.get(route.getId( )), mapforYToNow.get(route.getId( )) + 1, mapforXTo.get(route.getId( )), mapforYTo.get(route.getId( )));
+                        animationToHashMap.get(route.getId( )).playAnim( );
+
+                        mapforXTo.replace(route.getId( ), mapforXToNow.get(route.getId( )));
+                        mapforYTo.replace(route.getId( ), mapforYToNow.get(route.getId( )));
+
+
+
+                    } else {
+//                if (!group.getChildren( ).contains(fromGroup)) group.getChildren( ).add(fromGroup);
+                        pictureTo.put(route.getId( ), toGroup);
+                        animationToHashMap.put(route.getId( ), new AnimationMove(route.getId( )));
+                        isAnimRunMapTo.put(route.getId( ), false);
+                    }
+
+                    r.replace(route.getId(), route);
+
+                }
             }
 
-
+            else {
+                r.put(route.getId(),route);
+            }
         }
 
+    }
+
+    private void getFionaXToYTo (Long id, Group toGroup) {
+        if (!mapforXTo.containsKey(id)) {
+            double xTo = 0;
+            double yTo = 0;
+
+            for (Node node : toGroup.getChildren( )) {
+                if (node instanceof Circle) {
+                    xTo = ((Circle) node).getCenterX( );
+                    yTo = ((Circle) node).getCenterY( ) + 10;
+                }
+            }
+
+            mapforXTo.put(id, xTo);
+            mapforYTo.put(id, yTo);
+
+            gc.setFill(Color.PINK);
+            gc.fillOval(mapforXTo.put(id, xTo), mapforYTo.put(id, yTo) + 30, 5, 5);
+            gc.setFill(Color.BLACK);
+        }
+    }
+
+    private void getFionaXtoNowYtoNow (Long id, Group group) {
+
+        double xToNow = 0;
+        double yToNow = 0;
+
+        for (Node node : group.getChildren( )) {
+            if (node instanceof Circle) {
+                xToNow = ((Circle) node).getCenterX( );
+                yToNow = ((Circle) node).getCenterY( ) + 10;
+            }
+        }
+
+        mapforXToNow.put(id, xToNow);
+        mapforYToNow.put(id, yToNow);
+
+        gc.setFill(Color.BLUE);
+        gc.fillOval(xToNow, yToNow + 60, 5, 5);
+        gc.setFill(Color.BLACK);
     }
 
     private void getShrekXFrYFr (Long id, Group fromGroup) {
@@ -1167,6 +1287,8 @@ public class MainWindowCollectionController {
 
     public void getShrekXfrNowYfrNow (Long id, Group group) {
 
+        double xFrNow = 0;
+        double yFrNow = 0;
 
         for (Node node : group.getChildren( )) {
             if (node instanceof Circle) {
@@ -1184,7 +1306,8 @@ public class MainWindowCollectionController {
     }
 
     public void pleaseWork (Long id) {
-        isAnimRunMap.put(id, false);
+        isAnimRunMapFr.put(id, false);
+        isAnimRunMapTo.put(id, false);
     }
 
 
